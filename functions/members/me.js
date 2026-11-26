@@ -6,8 +6,14 @@ const PLAN_FOR = [
   [/mike|owner|admin/i, 'all'],
   [/plus/i, 'plus'],
   [/starter/i, 'starter'],
-  [/parent/i, 'parents'],
+  // One parent guide bought on its own (checked before the bundle list below).
+  [/under.?10/i, 'guide_under10'],
+  [/10.?(to|-)?.?13/i, 'guide_10to13'],
+  [/family.?set.?up/i, 'guide_family'],
+  // Bundle buyers (all three guides + printables). "Parent Guide Buyers" still counts as the bundle.
+  [/parent|bundle/i, 'parents'],
 ];
+const GUIDES = ['guide_under10', 'guide_10to13', 'guide_family'];
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
 // Who is signed in? Access normally adds a header; if not, read the email from the Access token (already checked by Access).
@@ -43,6 +49,7 @@ export async function onRequestGet({ request, env }) {
       }
     }));
     if (plans.has('plus')) { plans.add('starter'); plans.add('parents'); }
+    if (plans.has('parents')) GUIDES.forEach(g => plans.add(g));
     return json({ signedIn: true, email, configured: true, listsFound: wanted.map(l => l.name), plans: [...plans] });
   } catch (e) {
     return json({ signedIn: true, email, configured: false, reason: 'api-error', detail: String(e && e.message || e), plans: [] });
