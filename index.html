@@ -86,6 +86,8 @@ main section{padding-block:56px}
 .bubble.you{background:var(--sky-soft);align-self:flex-end;border-bottom-right-radius:6px}
 .bubble.ai{background:var(--accent-soft);align-self:flex-start;border-bottom-left-radius:6px;white-space:pre-line}
 .bubble.typing{opacity:.7;font-style:italic}
+.alt-link{display:block;margin-top:8px;text-align:center}
+.quote-cta{flex-direction:row;gap:12px;align-items:flex-start}
 .pip-quote{gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
 .pip-quote label{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
 .pip-quote input,.pip-quote textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg,#fff);color:var(--ink)}
@@ -318,7 +320,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
       <span class="eyebrow">Meet Pip</span>
       <h2>Your guide from "where do I start?" to "I've got this."</h2>
       <p>Pip is the friendly face of Easy Start AI. Pip answers quick questions, suggests a sensible first step, and knows when it's time to bring in a real person.</p>
-      <button class="btn primary open-pip" type="button" style="align-self:flex-start">Chat with Pip</button>
+      <div class="btns"><button class="btn primary open-pip" type="button">Chat with Pip</button><button class="btn ghost pip-quote-start" type="button">Get a quote for a job</button></div>
     </div>
     <ol class="journey">
       <li><span class="j-step">Where do I start?</span><p>Ask Pip anything, in plain words. No question is too basic.</p></li>
@@ -376,9 +378,9 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <h2>Packages</h2>
     <p class="lead">Every business is different, so we price workshops and projects after a free call, once we know what you need.</p>
     <div class="grid3">
-      <div class="panel"><span class="pill">Free</span><h3>Discovery call</h3><p class="price">Free</p><p>20 minutes by video to see where AI could help.</p><a class="btn primary pkg" href="#contact" data-package="Discovery call">Book a free call</a></div>
-      <div class="panel feature"><span class="pill">Most popular</span><h3>Team workshop</h3><p class="price q">Priced to fit</p><p>Your team learns hands-on using your own tasks, and leaves with prompts that work.</p><a class="btn ghost pkg" href="#contact" data-package="Team workshop">Get in touch for a quote</a></div>
-      <div class="panel"><span class="pill">Project</span><h3>Set-up project</h3><p class="price q">Priced to fit</p><p>We build and test one or two AI workflows, and write a simple how-to for staff.</p><a class="btn ghost pkg" href="#contact" data-package="Set-up project">Get in touch for a quote</a></div>
+      <div class="panel"><span class="pill">Free</span><h3>Discovery call</h3><p class="price">Free</p><p>20 minutes by video to see where AI could help.</p><button class="btn primary pip-book" type="button">Book a free call</button><a class="small pkg alt-link" href="#contact" data-package="Discovery call">or use the contact form</a></div>
+      <div class="panel feature"><span class="pill">Most popular</span><h3>Team workshop</h3><p class="price q">Priced to fit</p><p>Your team learns hands-on using your own tasks, and leaves with prompts that work.</p><button class="btn primary pip-quote-start" type="button">Get a quote</button><a class="small pkg alt-link" href="#contact" data-package="Team workshop">or send us a message</a></div>
+      <div class="panel"><span class="pill">Project</span><h3>Set-up project</h3><p class="price q">Priced to fit</p><p>We build and test one or two AI workflows, and write a simple how-to for staff.</p><button class="btn primary pip-quote-start" type="button">Get a quote</button><a class="small pkg alt-link" href="#contact" data-package="Set-up project">or send us a message</a></div>
     </div>
   </div></section>
 
@@ -431,7 +433,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <div class="grid3">
       <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul><a class="btn primary join" data-plan="starter" href="#contact">Join Starter</a></div>
       <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul><a class="btn primary join" data-plan="plus" href="#contact">Join Plus</a></div>
-      <div class="panel"><span class="pill">Made for you</span><h3>Custom package</h3><p class="price q">Priced to fit</p><p>Need more than a one-off hand? We'll put together a package around what you want to achieve.</p><ul class="ticks"><li>Starts with a free discovery call</li><li>Sessions booked at times that suit you</li></ul><a class="btn ghost pkg-time" href="#contact">Book a free discovery call</a></div>
+      <div class="panel"><span class="pill">Made for you</span><h3>Custom package</h3><p class="price q">Priced to fit</p><p>Need more than a one-off hand? We'll put together a package around what you want to achieve.</p><ul class="ticks"><li>Starts with a free discovery call</li><li>Sessions booked at times that suit you</li></ul><button class="btn primary pip-quote-start" type="button">Get a quote</button><a class="small pkg-time alt-link" href="#contact">or book a free discovery call</a></div>
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
       <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45</p></div>
@@ -612,6 +614,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
       <h1>Let's have a chat</h1>
       <p class="lead">Tell us a little about what you'd like help with. We'll reply within one working day <span class="guess">guess</span>.</p>
       <p>Prefer email? <strong>hello@easystartai.co.uk</strong></p>
+      <div class="panel quote-cta"><svg class="pip pip-sm" aria-hidden="true"><use href="#pip"/></svg><div class="stack" style="gap:6px"><h3>Want a price for a job?</h3><p>Pip asks a few quick questions and sends Mike a tidy summary, so he can reply with a tailored quote. It only takes a couple of minutes.</p><button class="btn primary pip-quote-start" type="button" style="align-self:flex-start">Get a quote with Pip</button></div></div>
     </div>
     <form class="form send-form" id="contactForm" data-msg="Thanks! Your message is on its way. We'll reply within one working day.">
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -872,7 +875,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   launcher.addEventListener('click',openPip);
   document.getElementById('pipMin').addEventListener('click',closePip);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)closePip();});
-  document.addEventListener('click',e=>{if(e.target.closest('.pip-book'))startIntake('call');if(e.target.closest('.open-pip'))openPip();if(e.target.closest('#log a'))closePip();});
+  document.addEventListener('click',e=>{if(e.target.closest('.pip-book')){openPip();startIntake('call');}if(e.target.closest('.pip-quote-start')){openPip();startIntake('intake');}if(e.target.closest('.open-pip'))openPip();if(e.target.closest('#log a'))closePip();});
   window.addEventListener('hashchange',()=>{if(!panel.hidden)renderChips();});
   form.addEventListener('submit',e=>{e.preventDefault();ask(input.value);input.value='';});
   showLeft();renderChips();
