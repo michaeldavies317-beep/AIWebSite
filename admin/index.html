@@ -20,6 +20,14 @@
   <h1>Mike's admin</h1>
   <p class="lead">Your private tools. This whole address is locked, so only you can get in.</p>
 </div>
+<section class="stack" id="buys" style="gap:16px">
+  <h2>Recent purchases</h2>
+  <p class="lead">The last 30 paid orders from Stripe, newest first, and which list to add each buyer to in Zero Trust (Reusable components &gt; Lists).</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="buysRefresh" type="button">Refresh</button><span class="small" id="buysUpdated"></span></div>
+  <div id="buysStatus" class="note" aria-live="polite">Loading…</div>
+  <div class="tablebox" id="buysBox" hidden><table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Bought</th><th>Paid</th><th>Add to list</th></tr></thead><tbody id="buysRows"></tbody></table></div>
+</section>
+
 <div class="stack">
   <h2>File list</h2>
   <p class="lead">Who can open each tip and template.</p>
@@ -127,6 +135,29 @@
     }catch(e){out.textContent='Could not reach Pip ('+e.message+'). Please send this to Claude.';}
   });
   m.addEventListener('change',load);load();
+})();
+</script>
+<script>
+// Recent purchases from Stripe (read-only key STRIPE_READ_KEY).
+(()=>{const st=document.getElementById('buysStatus'),box=document.getElementById('buysBox'),tb=document.getElementById('buysRows'),btn=document.getElementById('buysRefresh'),upd=document.getElementById('buysUpdated');
+  const td=(tr,t)=>{const c=document.createElement('td');c.textContent=t;tr.appendChild(c);};
+  async function load(){
+    st.hidden=false;st.textContent='Loading…';box.hidden=true;
+    let d;try{d=await (await fetch('/admin/purchases',{cache:'no-store'})).json();}catch(e){st.textContent='Could not load purchases. Try Refresh.';return;}
+    finally{upd.textContent='Last updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+    if(d.signedIn===false){st.textContent='Your sign-in has expired. Click Log out at the top, then open this page again.';return;}
+    if(d.configured===false){st.textContent='Not switched on yet. It needs the STRIPE_READ_KEY secret in Cloudflare Pages (see the setup guide, Part 9).';return;}
+    if(d.error){st.textContent='Stripe problem: '+d.error+'. Please send this message to Claude.';return;}
+    const rows=d.rows||[];
+    if(!rows.length){st.textContent='No paid orders yet.';return;}
+    st.textContent=d.test?'Showing TEST (sandbox) orders. No real money.':'Showing live orders.';
+    tb.innerHTML='';rows.forEach(r=>{const tr=document.createElement('tr');
+      td(tr,new Date(r.when).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));td(tr,r.name);td(tr,r.email);td(tr,r.product);td(tr,r.amount);
+      const c=document.createElement('td');const b=document.createElement('strong');b.textContent=r.list;c.appendChild(b);tr.appendChild(c);tb.appendChild(tr);});
+    box.hidden=false;
+  }
+  btn.addEventListener('click',async()=>{btn.disabled=true;await load();btn.disabled=false;});
+  load();
 })();
 </script>
 </body>
