@@ -34,9 +34,10 @@
 
 <section class="stack" id="pip" style="gap:16px;margin-top:24px">
   <h2>What people ask Pip</h2>
-  <p class="lead">The questions people ask Pip, saved anonymously. Questions Pip couldn't answer are the best ideas for new tips and guides.</p>
+  <p class="lead">The questions people ask Pip, saved anonymously. Questions not covered by a guide yet are the best ideas for new tips and guides.</p>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
     <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
+    <button class="btn primary" id="pipRefresh" type="button">Refresh</button><span class="small" id="pipUpdated"></span>
     <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
     <button class="btn ghost" id="pipTest" type="button">Send a test question</button>
     <button class="btn ghost" id="pipAiTest" type="button">Check Pip's AI</button>
@@ -80,7 +81,13 @@
   m.value=new Date().toISOString().slice(0,7);
   const STOP=new Set('a an the and or but if is are was be to of in on for with my me i it can do does how what which who why when where should would could will you your we our us this that there their they them at as by from about any some get got have has just like want need not no yes so up out into than then too very much many more most best good help ai'.split(' '));
   const cell=(tr,t)=>{const td=document.createElement('td');td.textContent=t;tr.appendChild(td);};
+  const upd=document.getElementById('pipUpdated'),rb=document.getElementById('pipRefresh');
+  const stamp=()=>{upd.textContent='Last updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});};
+  rb.addEventListener('click',async()=>{rb.disabled=true;rb.textContent='Refreshing…';await load();rb.disabled=false;rb.textContent='Refresh';});
   async function load(){
+    try{await loadInner();}finally{stamp();}
+  }
+  async function loadInner(){
     csv.href='/admin/pip-questions?format=csv&month='+m.value;
     st.hidden=false;st.textContent='Loading…';body.hidden=true;
     let d;try{d=await (await fetch('/admin/pip-questions?month='+m.value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the questions. Try refreshing the page.';return;}
