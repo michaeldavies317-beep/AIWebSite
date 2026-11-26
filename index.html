@@ -425,7 +425,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <div class="grid3">
       <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul></div>
       <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul></div>
-      <div class="panel"><span class="pill">Pay as you go</span><h3>Time bundle <span class="guess">guess</span></h3><p class="price">£120<small> for 3 hours</small></p><ul class="ticks"><li>3 hours of one-to-one help by video</li><li>Book it in 30 or 60-minute sessions</li><li>Use it within 3 months</li><li>Saves £15 on booking one at a time</li></ul><a class="btn ghost pkg-time" href="#contact">Ask about a bundle</a></div>
+      <div class="panel"><span class="pill">Made for you</span><h3>Custom package</h3><p class="price q">Priced to fit</p><p>Need more than a one-off hand? We'll put together a package around what you want to achieve.</p><ul class="ticks"><li>Starts with a free discovery call</li><li>Sessions booked at times that suit you</li></ul><a class="btn ghost pkg-time" href="#contact">Book a free discovery call</a></div>
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
       <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45</p></div>
@@ -564,7 +564,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
         <tr><td><strong>Membership</strong> (extra tips, templates, monthly Q&amp;A)</td><td>Everyone</td><td>£5 / month</td><td>–</td></tr>
         <tr><td><strong>Starter support</strong></td><td>Individuals</td><td>£15 / month</td><td>2 working days</td></tr>
         <tr><td><strong>Plus support</strong></td><td>Individuals</td><td>£35 / month</td><td>1 working day</td></tr>
-        <tr><td><strong>Time bundle</strong> (3 hours of one-to-one help, use within 3 months)</td><td>Individuals</td><td>£120 <span class="guess">guess</span></td><td>Booked sessions</td></tr>
+        <tr><td><strong>Custom package</strong></td><td>Individuals</td><td><a class="pkg-time" href="#contact">Get in touch</a></td><td>After a free discovery call</td></tr>
         <tr><td><strong>One-off set-up session</strong></td><td>Individuals</td><td>£45</td><td>Booked call</td></tr>
         <tr><td><strong>Parent guide</strong> (each)</td><td>Parents</td><td>£7</td><td>Instant download</td></tr>
         <tr><td><strong>Parent guide bundle</strong></td><td>Parents</td><td>£15</td><td>Instant download</td></tr>
@@ -734,7 +734,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   const cType=document.getElementById('c-type'),cPkg=document.getElementById('c-package'),cPkgWrap=document.getElementById('c-package-wrap');
   const syncPkg=()=>{cPkgWrap.hidden=cType.value!=='Business';};
   cType.addEventListener('change',syncPkg);
-  document.addEventListener('click',e=>{if(e.target.closest('.pkg-time')){cType.value='Personal';syncPkg();const m=document.getElementById('c-msg');if(!m.value)m.value='I\'m interested in the 3-hour time bundle.';return;}const a=e.target.closest('.pkg[data-package]');if(!a)return;cType.value='Business';cPkg.value=a.dataset.package;syncPkg();
+  document.addEventListener('click',e=>{if(e.target.closest('.pkg-time')){cType.value='Personal';syncPkg();const m=document.getElementById('c-msg');if(!m.value)m.value='I\'d like to book a free discovery call about a custom package.';return;}const a=e.target.closest('.pkg[data-package]');if(!a)return;cType.value='Business';cPkg.value=a.dataset.package;syncPkg();
     const m=document.getElementById('c-msg');if(!m.value)m.placeholder=a.dataset.package==='Discovery call'?'Tell us a little about your business and what takes up your time.':'Tell us about your team and what you\'d like from the '+a.dataset.package.toLowerCase()+'.';});
   syncPkg();
 
