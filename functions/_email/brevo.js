@@ -10,7 +10,7 @@ export const senders = (env) => ({
 
 export function brevo(env) {
   const call = async (path, init = {}) => {
-    const r = await fetch(API + path, { ...init, headers: { 'api-key': env.BREVO_API_KEY, accept: 'application/json', 'content-type': 'application/json' } });
+    const r = await fetch(API + path, { ...init, headers: { 'api-key': String(env.BREVO_API_KEY || '').trim().replace(/^["']|["']$/g, ''), accept: 'application/json', 'content-type': 'application/json' } });
     if (r.status === 204) return {};
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error('Brevo said: ' + (d.message || d.code || r.status));
