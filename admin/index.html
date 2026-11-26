@@ -59,7 +59,7 @@
   const data=await (await fetch('/members/library.json',{cache:'no-store'})).json();
   const rows=document.getElementById('rows');
   // A file's folder must match its lowest paid plan, or people could open it by its address.
-  function folderOk(it){const u=it.url;if(it.who.includes('free'))return true;if(u.startsWith('/members/starter/'))return it.who.includes('starter');if(u.startsWith('/members/parents/'))return it.who.includes('parents')&&!it.who.includes('starter');if(u.startsWith('/members/plus/'))return it.who.length===1&&it.who[0]==='plus';return false;}
+  function folderOk(it){const u=it.url;if(it.who.includes('free'))return true;if(u.startsWith('/members/starter/'))return it.who.includes('starter');if(u.startsWith('/members/parents/'))return it.who.includes('parents')&&!it.who.includes('starter');if(u.startsWith('/members/plus/'))return it.who.includes('plus')&&it.who.every(w=>w==='plus'||w.startsWith('guide_'));return false;}
   function render(){rows.innerHTML='';data.items.forEach((it,i)=>{const tr=document.createElement('tr');
     const t=document.createElement('td');t.innerHTML='<strong></strong><br><span class="small"></span>';t.querySelector('strong').textContent=it.title;t.querySelector('span').textContent=it.kind+' · '+it.url;tr.appendChild(t);
     const d=document.createElement('td');d.textContent=it.added;tr.appendChild(d);

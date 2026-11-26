@@ -1,5 +1,5 @@
 {
-  "_help": "Mike's file list. Each entry is one tip, template or guide. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Guides people can buy on their own live in their own subfolder (plus/cv-kit/, parents/under-10/ and so on) and have a 'price'. Bundle bonus printables live in parents/bundle/. Free items link to the public site. A single parent guide also lists its own plan (guide_under10, guide_10to13 or guide_family) so people who bought just that one can open it.",
+  "_help": "Mike's file list. Each entry is one tip, template or guide. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Guides people can buy on their own live in their own subfolder (plus/cv-kit/, parents/under-10/ and so on) and have a 'price'. Bundle bonus printables live in parents/bundle/. Free items link to the public site. A single parent guide also lists its own plan (guide_under10, guide_10to13 or guide_family) so people who bought just that one can open it. 'buy' is the Stripe Payment Link for buying that guide on its own (TEST links for now: swap for live links at launch).",
   "items": [
     {
       "title": "Write a better prompt in 3 steps",
@@ -169,55 +169,65 @@
       "kind": "Guide",
       "added": "2026-11-26",
       "who": [
+        "guide_write",
         "plus"
       ],
       "url": "/members/plus/write-like-you/",
       "blurb": "A saved voice guide so drafts sound like you.",
-      "price": "£9"
+      "price": "£9",
+      "buy": "https://buy.stripe.com/test_4gMdR93kL8qH0a342W5AQ07"
     },
     {
       "title": "CV and job application kit",
       "kind": "Guide",
       "added": "2026-11-26",
       "who": [
+        "guide_cv",
         "plus"
       ],
       "url": "/members/plus/cv-kit/",
       "blurb": "CV refresh, cover letters and interview practice.",
-      "price": "£9"
+      "price": "£9",
+      "buy": "https://buy.stripe.com/test_cNifZh3kL8qH4qj6b45AQ08"
     },
     {
       "title": "Money and budgeting with AI",
       "kind": "Guide",
       "added": "2026-11-26",
       "who": [
+        "guide_budget",
         "plus"
       ],
       "url": "/members/plus/budgeting/",
       "blurb": "A simple budget from a month of spending, safely.",
-      "price": "£9"
+      "price": "£9",
+      "buy": "https://buy.stripe.com/test_28E9ATaNdcGX8Gz5705AQ09"
     },
     {
       "title": "Start a side hustle with AI",
       "kind": "Guide",
       "added": "2026-11-26",
       "who": [
+        "guide_hustle",
         "plus"
       ],
       "url": "/members/plus/side-hustle/",
       "blurb": "From idea to your first listing and a week of posts.",
-      "price": "£9"
+      "price": "£9",
+      "buy": "https://buy.stripe.com/test_aFa6oH6wXbCT4qjczs5AQ0a"
     },
     {
       "title": "Notes to actions",
       "kind": "Guide",
       "added": "2026-11-26",
       "who": [
+        "guide_notes",
         "plus"
       ],
       "url": "/members/plus/notes-to-actions/",
       "blurb": "Turn voice notes and meetings into a tidy to-do list.",
-      "price": "£9"
+      "price": "£9",
+      "buy": "https://buy.stripe.com/test_9B6bJ1g7xcGX3mfark5AQ0b"
     },
     {
       "title": "First steps with AI (under 10s)",
@@ -230,7 +240,8 @@
       ],
       "url": "/members/parents/under-10/",
       "blurb": "Safe settings, kid-friendly apps and fun things to make together.",
-      "price": "£7"
+      "price": "£7",
+      "buy": "https://buy.stripe.com/test_7sYeVd2gH0Yf3mf5705AQ03"
     },
     {
       "title": "AI, homework and chatbots (10 to 13s)",
@@ -243,7 +254,8 @@
       ],
       "url": "/members/parents/10-to-13/",
       "blurb": "School rules, honest homework help, age limits and AI friends.",
-      "price": "£7"
+      "price": "£7",
+      "buy": "https://buy.stripe.com/test_eVqaEX6wXbCTf4X2YS5AQ04"
     },
     {
       "title": "Family set-up guide",
@@ -256,7 +268,8 @@
       ],
       "url": "/members/parents/family-setup/",
       "blurb": "Phone, tablet, laptop and console controls, one screen at a time.",
-      "price": "£7"
+      "price": "£7",
+      "buy": "https://buy.stripe.com/test_3cIbJ18F57mDaOH1UO5AQ05"
     },
     {
       "title": "Family AI rules poster",

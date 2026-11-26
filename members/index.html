@@ -34,9 +34,9 @@
   const known=!!(me&&me.configured);
   const has=new Set(known?me.plans:[]);
   const st=has.has('starter'),pl=has.has('plus'),pa=has.has('parents');
-  const mine=new Set(['free']);if(st)mine.add('starter');if(pl){mine.add('plus');mine.add('starter');mine.add('parents');}if(pa)mine.add('parents');has.forEach(p=>{if(p.startsWith('guide_'))mine.add(p);});const gu=[...has].some(p=>p.startsWith('guide_'));
-  const top=pl?'plus':(st&&pa?'starter and parents':(st?'starter':(pa||gu?'parents':'free')));
-  const names={plus:'Plus','starter and parents':'Starter and Parent guide',starter:'Starter',parents:'Parent guide',free:'Free'};
+  const mine=new Set(['free']);if(st)mine.add('starter');if(pl){mine.add('plus');mine.add('starter');mine.add('parents');}if(pa)mine.add('parents');has.forEach(p=>{if(p.startsWith('guide_'))mine.add(p);});const gu=[...has].some(p=>p.startsWith('guide_'));const pg=['guide_under10','guide_10to13','guide_family'].some(p=>has.has(p));
+  const top=pl?'plus':(st&&pa?'starter and parents':(st?'starter':(pa||pg?'parents':(gu?'guide':'free'))));
+  const names={plus:'Plus','starter and parents':'Starter and Parent guide',starter:'Starter',parents:'Parent guide',free:'Free',guide:'Single guide'};
   const who=me&&me.email?' ('+me.email+')':'';
   document.getElementById('plan').textContent=known?'Your plan: '+names[top]+who+'. Everything you can open is shown first.':'Signed in'+who+'. Open anything below; if it isn\'t in your plan, you\'ll see a "no access" page.';
   if(!known){ORDER.forEach(r=>mine.add(r));}
@@ -46,7 +46,7 @@
   items.forEach(it=>{
     const ok=it.who.some(w=>mine.has(w));
     const need=ORDER.find(r=>it.who.includes(r))||'plus';
-    const buy=!ok&&it.price;const el=document.createElement(ok||buy?'a':'div');el.className='card'+(ok?'':' locked');if(ok)el.href=it.url;else if(buy)el.href=need==='parents'?'/#parents':'/#personal-plans';
+    const buy=!ok&&it.price;const el=document.createElement(ok||buy?'a':'div');el.className='card'+(ok?'':' locked');if(ok)el.href=it.url;else if(buy)el.href=it.buy||(need==='parents'?'/#parents':'/#personal-plans');
     const meta=document.createElement('div');meta.className='meta';
     const pill=document.createElement('span');pill.className='pill r-'+need;pill.textContent=LABEL[need];
     const k=document.createElement('span');k.textContent=it.kind;meta.append(pill,k);

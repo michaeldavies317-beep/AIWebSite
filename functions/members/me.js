@@ -10,6 +10,12 @@ const PLAN_FOR = [
   [/under.?10/i, 'guide_under10'],
   [/10.?(to|-)?.?13/i, 'guide_10to13'],
   [/family.?set.?up/i, 'guide_family'],
+  // One Plus guide bought on its own.
+  [/write.?like/i, 'guide_write'],
+  [/\bcv\b/i, 'guide_cv'],
+  [/budget/i, 'guide_budget'],
+  [/hustle/i, 'guide_hustle'],
+  [/notes/i, 'guide_notes'],
   // Bundle buyers (all three guides + printables). "Parent Guide Buyers" still counts as the bundle.
   [/parent|bundle/i, 'parents'],
 ];
