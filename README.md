@@ -1,4 +1,4 @@
-# AI help website
+# Easy Start AI website
 
 The website for Mike's friendly AI help business. It's a single page, `index.html`, with no build step.
 
