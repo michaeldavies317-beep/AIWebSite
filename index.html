@@ -106,6 +106,7 @@ main section{padding-block:56px}
 .step{display:flex;flex-direction:column;gap:8px}
 .step .num{font-family:var(--display);font-weight:800;font-size:2.4rem;color:var(--accent);line-height:1}
 .panel .pill{align-self:flex-start}
+.panel .join{margin-top:auto;align-self:flex-start}
 .panel .pkg-time{margin-top:auto;align-self:flex-start}
 .panel .pkg{margin-top:auto;align-self:flex-start}
 .price.q{font-size:1.4rem}
@@ -275,6 +276,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <a href="#pricing">Pricing</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
+    <a href="/members/">Members</a>
   </nav>
 </div></header>
 
@@ -423,8 +425,8 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   <section id="personal-plans"><div class="wrap stack" style="gap:28px">
     <h2>Support from a real person, with reply times you can count on <span class="guess">guess prices</span></h2>
     <div class="grid3">
-      <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul></div>
-      <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul></div>
+      <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul><a class="btn primary join" data-plan="starter" href="#contact">Join Starter</a></div>
+      <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul><a class="btn primary join" data-plan="plus" href="#contact">Join Plus</a></div>
       <div class="panel"><span class="pill">Made for you</span><h3>Custom package</h3><p class="price q">Priced to fit</p><p>Need more than a one-off hand? We'll put together a package around what you want to achieve.</p><ul class="ticks"><li>Starts with a free discovery call</li><li>Sessions booked at times that suit you</li></ul><a class="btn ghost pkg-time" href="#contact">Book a free discovery call</a></div>
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
@@ -737,6 +739,11 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   document.addEventListener('click',e=>{if(e.target.closest('.pkg-time')){cType.value='Personal';syncPkg();const m=document.getElementById('c-msg');if(!m.value)m.value='I\'d like to book a free discovery call about a custom package.';return;}const a=e.target.closest('.pkg[data-package]');if(!a)return;cType.value='Business';cPkg.value=a.dataset.package;syncPkg();
     const m=document.getElementById('c-msg');if(!m.value)m.placeholder=a.dataset.package==='Discovery call'?'Tell us a little about your business and what takes up your time.':'Tell us about your team and what you\'d like from the '+a.dataset.package.toLowerCase()+'.';});
   syncPkg();
+
+  // Membership: Stripe Payment Links. Paste Mike's links here once he makes them in Stripe.
+  const JOIN={starter:'STRIPE_STARTER_LINK',plus:'STRIPE_PLUS_LINK'};
+  document.querySelectorAll('.join[data-plan]').forEach(a=>{const u=JOIN[a.dataset.plan];if(u.startsWith('https://')){a.href=u;a.rel='noopener';}
+    else a.addEventListener('click',()=>{cType.value='Personal';syncPkg();const m=document.getElementById('c-msg');if(!m.value)m.value='I\'d like to join the '+(a.dataset.plan==='plus'?'Plus':'Starter')+' plan.';});});
 
   // Personal: goal picker
   const goals={

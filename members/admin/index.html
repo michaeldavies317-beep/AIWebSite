@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='44' width='14' height='14' rx='5' fill='%230f8a74' opacity='.45'/%3E%3Crect x='22' y='32' width='14' height='26' rx='5' fill='%230f8a74' opacity='.72'/%3E%3Crect x='40' y='20' width='14' height='38' rx='5' fill='%230f8a74'/%3E%3Ccircle cx='47' cy='9' r='6.5' fill='%23ffd166'/%3E%3C/svg%3E">
+<title>Mike's file list · Easy Start AI Members</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/members/members.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/members/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="44" width="14" height="14" rx="5" fill="var(--accent)" opacity=".45"/><rect x="22" y="32" width="14" height="26" rx="5" fill="var(--accent)" opacity=".72"/><rect x="40" y="20" width="14" height="38" rx="5" fill="var(--accent)"/><circle cx="47" cy="9" r="6.5" fill="var(--sun)"/></svg><span>Easy Start <span class="ai">AI</span> <small>Members</small></span></a>
+  <nav class="mnav" aria-label="Members"><a href="/members/">Library</a><a href="/">Main site</a><a href="/cdn-cgi/access/logout">Log out</a></nav>
+</div></header>
+<main><div class="wrap stack" style="gap:24px">
+<div class="stack">
+  <h1>Mike's file list</h1>
+  <p class="lead">Who can open each tip and template. Only you can see this page.</p>
+</div>
+<div class="note">To change who sees a file, tick or untick below, then click <strong>Copy the updated list</strong> and send it to Claude (or paste it into <code>members/library.json</code> on GitHub). Plus members can always open everything.</div>
+<div class="tablebox"><table>
+  <thead><tr><th>File</th><th>Added</th><th>Free</th><th>Starter</th><th>Plus</th><th>Parent guide</th><th>Check</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn" id="copy" type="button">Copy the updated list</button><span class="small" id="copied" aria-live="polite"></span></div>
+<textarea id="out" rows="8" style="width:100%;font-family:ui-monospace,monospace;font-size:.85rem;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink)" hidden aria-label="Updated list"></textarea>
+</div></main>
+<footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>Questions? support@easystartai.co.uk</span></div></footer>
+<script>
+(async()=>{
+  const ROLES=['free','starter','plus','parents'];
+  const data=await (await fetch('/members/library.json',{cache:'no-store'})).json();
+  const rows=document.getElementById('rows');
+  // A file's folder must match its lowest paid plan, or people could open it by its address.
+  function folderOk(it){const u=it.url;if(it.who.includes('free'))return true;if(u.startsWith('/members/starter/'))return it.who.includes('starter');if(u.startsWith('/members/parents/'))return it.who.includes('parents')&&!it.who.includes('starter');if(u.startsWith('/members/plus/'))return it.who.length===1&&it.who[0]==='plus';return false;}
+  function render(){rows.innerHTML='';data.items.forEach((it,i)=>{const tr=document.createElement('tr');
+    const t=document.createElement('td');t.innerHTML='<strong></strong><br><span class="small"></span>';t.querySelector('strong').textContent=it.title;t.querySelector('span').textContent=it.kind+' · '+it.url;tr.appendChild(t);
+    const d=document.createElement('td');d.textContent=it.added;tr.appendChild(d);
+    ROLES.forEach(r=>{const c=document.createElement('td');const x=document.createElement('input');x.type='checkbox';x.checked=it.who.includes(r);x.setAttribute('aria-label',r+' can open '+it.title);
+      if(r==='plus'){x.checked=true;x.disabled=true;}
+      x.addEventListener('change',()=>{it.who=x.checked?[...new Set([...it.who,r])]:it.who.filter(w=>w!==r);render();});c.appendChild(x);tr.appendChild(c);});
+    const chk=document.createElement('td');chk.className='small';chk.textContent=folderOk(it)?'OK':'Ask Claude to move this file';tr.appendChild(chk);
+    rows.appendChild(tr);});}
+  render();
+  document.getElementById('copy').addEventListener('click',async()=>{const txt=JSON.stringify(data,null,2);const out=document.getElementById('out');out.value=txt;out.hidden=false;
+    try{await navigator.clipboard.writeText(txt);document.getElementById('copied').textContent='Copied. Paste it to Claude.';}catch(e){out.select();document.getElementById('copied').textContent='Select all the text below and copy it.';}});
+})();
+</script>
+</body>
+</html>
