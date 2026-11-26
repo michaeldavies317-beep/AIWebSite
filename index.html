@@ -3,642 +3,137 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Friendly, jargon-free AI help for businesses, individuals and parents.">
-<meta name="robots" content="noindex, nofollow">
 <title>Easy Start AI</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Easy Start AI: friendly, jargon-free help getting started with AI, for small businesses, individuals and parents. Coming soon.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one calm column per page, a sticky top bar, three "doors" on home; soft rounded shapes like stepping stones */
 :root{
   --bg:#f6f8f7; --surface:#ffffff; --ink:#17302b; --muted:#566b66; --line:#dde6e3;
-  --accent:#0f8a74; --accent-ink:#ffffff; --accent-soft:#dff2ec;
-  --sun:#ffd166; --sun-soft:#fff3d1; --sky-soft:#e4eefb; --sky:#3b6fb6;
-  --guess:#9a5b00; --guess-bg:#fff0cc;
-  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
-  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
-  --r:18px; --you:#0f8a74; --you-soft:#dff2ec;
+  --accent:#0f8a74; --accent-ink:#ffffff; --accent-soft:#dff2ec; --sun:#ffd166;
+  --blue:#2f63b0; --blue-soft:#e3ecf9; --amber:#a8620a; --amber-soft:#fff0d4;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+@media (prefers-color-scheme: dark){:root{
   --bg:#0f1a18; --surface:#16241f; --ink:#e7f1ee; --muted:#9db3ad; --line:#26372f;
   --accent:#3cc6a8; --accent-ink:#06201a; --accent-soft:#173a31;
-  --sun:#f5c14f; --sun-soft:#3a3016; --sky-soft:#182a40; --sky:#8fb5ea;
-  --guess:#ffcf7a; --guess-bg:#3d2d0c; --you:#3cc6a8; --you-soft:#173a31; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f1a18; --surface:#16241f; --ink:#e7f1ee; --muted:#9db3ad; --line:#26372f;
-  --accent:#3cc6a8; --accent-ink:#06201a; --accent-soft:#173a31;
-  --sun:#f5c14f; --sun-soft:#3a3016; --sky-soft:#182a40; --sky:#8fb5ea;
-  --guess:#ffcf7a; --guess-bg:#3d2d0c; --you:#3cc6a8; --you-soft:#173a31; color-scheme:dark}
-
+  --blue:#7ea8e8; --blue-soft:#1a2a40; --amber:#f2b740; --amber-soft:#3a2c10; color-scheme:dark}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0;letter-spacing:-.01em}
-h1{font-size:clamp(2.1rem,5.5vw,3.6rem);font-weight:800}
-h2{font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:700}
-h3{font-size:1.25rem;font-weight:700}
-p{margin:0;max-width:65ch}
-a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:6px}
-
-.preview-bar{background:var(--sun-soft);color:var(--ink);font-size:.9rem}
-.preview-bar .wrap{padding-block:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.guess{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--guess-bg);color:var(--guess);padding:2px 8px;border-radius:999px;vertical-align:middle;font-family:var(--body)}
-
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
-header.top .wrap{display:flex;align-items:center;gap:16px;padding-block:12px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:800;font-size:1.3rem}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:1.12;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.2rem,6vw,3.8rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,3.2vw,2rem)}
+h3{font-size:1.2rem}
+p{margin:0;max-width:62ch}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.3rem}
 .logo-mark{width:34px;height:34px;border-radius:11px;background:var(--accent);display:grid;place-items:center}
 .logo-mark span{width:12px;height:12px;border-radius:50%;background:var(--sun)}
-nav.main{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
-nav.main a{text-decoration:none;color:var(--muted);font-weight:600;font-size:.95rem;padding:6px 12px;border-radius:999px}
-nav.main a:hover{color:var(--ink);background:var(--accent-soft)}
-nav.main a[aria-current="page"]{color:var(--accent-ink);background:var(--accent)}
-.menu-btn{display:none;margin-left:auto;background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;cursor:pointer}
-@media (max-width:820px){
-  .menu-btn{display:block}
-  nav.main{display:none;width:100%;margin-left:0}
-  nav.main.open{display:flex}
-}
-
-main section{padding-block:56px}
-.view{display:block}
-.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;text-decoration:none;border-radius:999px;padding:12px 22px;border:2px solid var(--accent);cursor:pointer;transition:transform .15s}
-.btn:hover{transform:translateY(-2px)}
-.btn.primary{background:var(--accent);color:var(--accent-ink)}
-.btn.ghost{background:transparent;color:var(--accent)}
-.btns{display:flex;gap:12px;flex-wrap:wrap}
-.eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.badge{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent);padding:5px 12px;border-radius:999px}
+.hero .wrap{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;padding-block:40px 56px}
+.hero .wrap > *{min-width:0}
+@media (max-width:780px){.hero .wrap{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:18px}
 .lead{font-size:1.2rem;color:var(--muted)}
-.stack{display:flex;flex-direction:column;gap:16px}
-
-/* hero */
-.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
-.hero > *{min-width:0}
-@media (max-width:820px){.hero{grid-template-columns:1fr}}
-.prompt-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 40px -28px rgba(15,60,50,.45)}
-.bubble{padding:12px 16px;border-radius:18px;max-width:90%;font-size:.98rem}
-.bubble.you{background:var(--sky-soft);align-self:flex-end;border-bottom-right-radius:6px}
-.bubble.ai{background:var(--accent-soft);align-self:flex-start;border-bottom-left-radius:6px}
-.small{font-size:.85rem;color:var(--muted)}
-
-/* doors */
+.pip-wrap{display:grid;place-items:center}
+.pip{width:min(220px,60vw);height:auto}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media (max-width:820px){.doors{grid-template-columns:1fr}}
-.door{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:var(--ink);transition:border-color .2s, transform .2s}
-.door:hover{border-color:var(--accent);transform:translateY(-3px)}
-.door .tag{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.2rem}
-.door .go{margin-top:auto;font-weight:700;color:var(--accent)}
-.t-biz{background:var(--sky-soft);color:var(--sky)}
-.t-you{background:var(--you-soft);color:var(--you)}
-.t-par{background:var(--sun-soft);color:var(--guess)}
-
+@media (max-width:780px){.doors{grid-template-columns:1fr}}
+.door{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.tag{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-family:var(--display);font-weight:800}
+.t-b{background:var(--blue-soft);color:var(--blue)}.t-y{background:var(--accent-soft);color:var(--accent)}.t-p{background:var(--amber-soft);color:var(--amber)}
+section{padding-block:48px}
 .band{background:var(--surface);border-block:1px solid var(--line)}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-@media (max-width:820px){.grid3,.grid2{grid-template-columns:1fr}}
-.grid3 > *,.grid2 > *{min-width:0}
-.step{display:flex;flex-direction:column;gap:8px}
-.step .num{font-family:var(--display);font-weight:800;font-size:2.4rem;color:var(--accent);line-height:1}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:10px}
-.panel.feature{border:2px solid var(--accent)}
-.price{font-family:var(--display);font-weight:800;font-size:2rem}
-.price small{font-family:var(--body);font-size:.95rem;font-weight:500;color:var(--muted)}
-ul.ticks{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
-ul.ticks li{padding-left:26px;position:relative}
-ul.ticks li::before{content:"";position:absolute;left:2px;top:.5em;width:12px;height:7px;border-left:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(-45deg)}
-.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.82rem;padding:3px 10px;border-radius:999px}
-.quote{font-family:var(--display);font-size:clamp(1.4rem,3vw,2rem);font-weight:700;max-width:28ch}
-
-/* chat */
-.chat{background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
-.chat-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
-.chat-log{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:220px;max-height:360px;overflow-y:auto}
-.chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
-.chat-form input{flex:1;min-width:0}
-.chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 14px}
-.chip{font:inherit;font-size:.85rem;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
-.chip:hover{border-color:var(--accent)}
-input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 14px;width:100%}
-textarea{min-height:120px;resize:vertical}
+.signup{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+@media (max-width:780px){.signup{grid-template-columns:1fr}}
+form{display:grid;gap:14px}
 label{font-weight:600;font-size:.95rem;display:flex;flex-direction:column;gap:6px}
-.form{display:grid;gap:16px;max-width:560px}
-.notice{background:var(--accent-soft);border-radius:14px;padding:14px 18px;font-weight:600}
-
-/* tips */
-.tip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:8px}
-.tip.locked{background:repeating-linear-gradient(135deg,var(--surface) 0 12px,var(--bg) 12px 24px)}
-.tip .meta{font-size:.82rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
-
-table.cmp{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:560px}
-table.cmp th,table.cmp td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-table.cmp th{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.scroll-x{overflow-x:auto}
-
-footer{border-top:1px solid var(--line);background:var(--surface)}
-footer .wrap{padding-block:32px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
-footer nav{display:flex;gap:14px;flex-wrap:wrap}
-footer a{color:var(--muted)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-
-/* v2: each section gets its own accent; Pip the mascot takes on the section colour */
-body[data-section="business"]{--accent:#2f63b0;--accent-soft:#e3ecf9;--accent-ink:#ffffff}
-body[data-section="parents"]{--accent:#a8620a;--accent-soft:#fff0d4;--accent-ink:#ffffff}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body[data-section="business"]{--accent:#7ea8e8;--accent-soft:#1a2a40;--accent-ink:#0b1626}
-  :root:not([data-theme="light"]) body[data-section="parents"]{--accent:#f2b740;--accent-soft:#3a2c10;--accent-ink:#2a1c00}}
-:root[data-theme="dark"] body[data-section="business"]{--accent:#7ea8e8;--accent-soft:#1a2a40;--accent-ink:#0b1626}
-:root[data-theme="dark"] body[data-section="parents"]{--accent:#f2b740;--accent-soft:#3a2c10;--accent-ink:#2a1c00}
-nav.main a.n-business[aria-current="page"]{background:var(--accent)}
-
-.pip{display:inline-block;flex:none}
-.pip-hero{width:96px;height:96px}
-.pip-sm{width:34px;height:34px}
-.bubble-row{display:flex;gap:8px;align-items:flex-end}
-.bubble-row .bubble{max-width:100%}
-.hero-pip{display:flex;align-items:center;gap:14px}
-.hero-pip .say{background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:.95rem;max-width:34ch}
-
-/* Business: crisp, structured */
-.biz-hero{background:var(--accent-soft)}
-.biz-hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-block:64px}
-@media (max-width:820px){.biz-hero .wrap{grid-template-columns:1fr}}
-.biz-hero .wrap > *{min-width:0}
-.who{display:flex;flex-wrap:wrap;gap:8px}
-.who span{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:.88rem;font-weight:600}
-.wins{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.wins table{width:100%;border-collapse:collapse;font-size:.95rem}
-.wins th,.wins td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
-.wins th{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--bg)}
-.wins tr:last-child td{border-bottom:0}
-.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
-.timeline::before{content:"";position:absolute;left:12px;right:12px;top:15px;height:2px;background:var(--line)}
-.timeline .t{position:relative;padding-right:16px;display:flex;flex-direction:column;gap:6px}
-.timeline .dot{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-family:var(--display);position:relative}
-@media (max-width:820px){.timeline{grid-template-columns:1fr;gap:20px}.timeline::before{display:none}}
-details.faq{border-bottom:1px solid var(--line);padding-block:14px}
-details.faq summary{cursor:pointer;font-weight:700;font-size:1.05rem}
-details.faq p{margin-top:8px;color:var(--muted)}
-
-/* Personal: playful but tidy, goal picker */
-.goal-picker{display:flex;flex-wrap:wrap;gap:10px}
-.goal{font:inherit;font-weight:600;background:var(--surface);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer}
-.goal[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.goal-steps{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:14px}
-.goal-steps ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
-.prompt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
-
-/* Parents: warm, calm, age bands */
-.par-hero{background:linear-gradient(180deg,var(--accent-soft),var(--bg))}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
-.tab{font:inherit;font-weight:700;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 16px;color:var(--muted);cursor:pointer}
-.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
-.tabpanel{padding-top:20px}
-.check-preview{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
-.check-preview li{list-style:none;display:flex;gap:10px;align-items:flex-start}
-.check-preview ul{margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.box{width:20px;height:20px;border:2px solid var(--accent);border-radius:6px;flex:none;margin-top:3px}
-.fade{opacity:.35;filter:blur(1.5px);user-select:none}
-.starter{border-left:4px solid var(--accent);padding:8px 0 8px 16px;font-family:var(--display);font-size:1.25rem;font-weight:700;max-width:40ch}
-
-/* Tips filter */
-.filters{display:flex;gap:8px;flex-wrap:wrap}
-.tip .try{font-size:.85rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 14px;width:100%}
+.btn{font:inherit;font-weight:700;border-radius:999px;padding:12px 22px;border:2px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer;justify-self:start}
+.btn:disabled{opacity:.6}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.notice{background:var(--accent-soft);border-radius:14px;padding:12px 16px;font-weight:600}
+.small{font-size:.9rem;color:var(--muted)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="pip" viewBox="0 0 120 120">
-<line x1="60" y1="22" x2="60" y2="8" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
-<circle cx="60" cy="8" r="6" fill="var(--sun)"/>
-<rect x="14" y="22" width="92" height="84" rx="30" fill="var(--accent)"/>
-<rect x="26" y="36" width="68" height="50" rx="22" fill="#ffffff"/>
-<ellipse cx="47" cy="58" rx="6" ry="7.5" fill="#17302b"/><ellipse cx="73" cy="58" rx="6" ry="7.5" fill="#17302b"/>
-<circle cx="49" cy="55" r="2" fill="#fff"/><circle cx="75" cy="55" r="2" fill="#fff"/>
-<path d="M50 72 Q60 80 70 72" fill="none" stroke="#17302b" stroke-width="3.5" stroke-linecap="round"/>
-</symbol></defs></svg>
 
-
-<div class="preview-bar"><div class="wrap"><strong>Preview only.</strong> Prices and some wording are placeholders. Anything marked <span class="guess">guess</span> is my guess, for you to change. Forms and payments aren't connected yet.</div></div>
-
-<header class="top"><div class="wrap">
-  <a class="logo" href="#home"><span class="logo-mark"><span></span></span>Easy Start AI</a>
-  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mainNav">Menu</button>
-  <nav class="main" id="mainNav" aria-label="Main">
-    <a href="#home">Home</a>
-    <a href="#business">For Business</a>
-    <a href="#personal">Personal Help</a>
-    <a href="#parents">Parents &amp; Kids</a>
-    <a href="#tips">Tips</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </nav>
+<header><div class="wrap">
+  <div class="logo"><span class="logo-mark"><span></span></span>Easy Start AI</div>
+  <span class="badge">Coming soon</span>
 </div></header>
 
 <main>
+<section class="hero" style="padding-block:0"><div class="wrap">
+  <div class="stack">
+    <h1>AI isn't scary. It's simple once you know what you want.</h1>
+    <p class="lead">Easy Start AI is friendly, jargon-free help getting started with AI. We're putting the finishing touches to the full site. Leave your email and we'll let you know the moment it opens.</p>
+  </div>
+  <div class="pip-wrap">
+    <svg class="pip" viewBox="0 0 120 120" role="img" aria-label="Pip, the Easy Start AI helper">
+      <line x1="60" y1="22" x2="60" y2="8" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="60" cy="8" r="6" fill="var(--sun)"/>
+      <rect x="14" y="22" width="92" height="84" rx="30" fill="var(--accent)"/>
+      <rect x="26" y="36" width="68" height="50" rx="22" fill="#ffffff"/>
+      <ellipse cx="47" cy="58" rx="6" ry="7.5" fill="#17302b"/><ellipse cx="73" cy="58" rx="6" ry="7.5" fill="#17302b"/>
+      <circle cx="49" cy="55" r="2" fill="#fff"/><circle cx="75" cy="55" r="2" fill="#fff"/>
+      <path d="M50 72 Q60 80 70 72" fill="none" stroke="#17302b" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div></section>
 
-<!-- HOME -->
-<div class="view" data-view="home">
-  <section><div class="wrap hero">
-    <div class="stack">
-      <span class="eyebrow">Friendly AI help</span>
-      <h1>AI isn't scary. It's simple once you know what you want.</h1>
-      <p class="lead">We help businesses, curious individuals and parents get set up with AI, in plain English, at your own pace. No jargon, no hype, no pressure.</p>
-      <div class="btns"><a class="btn primary" href="#contact">Have a free chat</a><a class="btn ghost" href="#tips">Read free tips</a></div>
-    </div>
-    <div class="prompt-card" aria-label="Example conversation">
-      <div class="bubble you">I run a small café. Can AI actually help me?</div>
-      <div class="bubble-row"><svg class="pip pip-sm" aria-hidden="true"><use href="#pip"/></svg><div class="bubble ai">Yes, in small, useful ways. It can draft your weekly menu post, answer common customer emails and keep your rota tidy. Want to start with one?</div></div>
-      <div class="bubble you">The emails, please. They take me hours.</div>
-      <p class="small">That's Pip, our helper. This is the kind of first step we help with.</p>
-    </div>
-  </div></section>
+<section style="padding-top:0"><div class="wrap stack" style="gap:24px">
+  <h2>Who we'll help</h2>
+  <div class="doors">
+    <div class="door"><span class="tag t-b">B</span><h3>Small businesses</h3><p>Start-ups and small to medium firms. We find the everyday jobs AI can speed up, set them up properly, and train your team.</p></div>
+    <div class="door"><span class="tag t-y">Y</span><h3>You</h3><p>Want to use AI but don't know where to start? We'll get you set up for whatever you want to do, at your own pace.</p></div>
+    <div class="door"><span class="tag t-p">P</span><h3>Parents</h3><p>Calm, practical guidance on helping your kids use AI safely. What to know, and what to put in place.</p></div>
+  </div>
+</div></section>
 
-  <section style="padding-top:0"><div class="wrap stack" style="gap:24px">
-    <h2>Where would you like to start?</h2>
-    <div class="doors">
-      <a class="door" href="#business"><span class="tag t-biz">B</span><h3>For your business</h3><p>Start-ups and small or medium firms. Find the jobs AI can take off your plate, and set them up properly.</p><span class="go">See how it works →</span></a>
-      <a class="door" href="#personal"><span class="tag t-you">Y</span><h3>For you</h3><p>Want to use AI but don't know where to begin? We'll get you set up for whatever you want to do.</p><span class="go">Get started →</span></a>
-      <a class="door" href="#parents"><span class="tag t-par">P</span><h3>For parents</h3><p>Calm, practical guidance on helping your kids use AI safely. What to know, and what to put in place.</p><span class="go">Keep kids safe →</span></a>
-    </div>
-  </div></section>
-
-  <section class="band"><div class="wrap grid3">
-    <div class="step"><h3>Plain English, always</h3><p>We explain things the way a friend would. If a word needs a dictionary, we don't use it.</p></div>
-    <div class="step"><h3>Start small</h3><p>One useful thing that works beats ten clever things you never use.</p></div>
-    <div class="step"><h3>We stick around</h3><p>Setting up is half of it. We're here when you have questions later.</p></div>
-  </div></section>
-</div>
-
-<!-- BUSINESS -->
-<div class="view" data-view="business" hidden>
-  <section class="biz-hero" style="padding-block:0"><div class="wrap">
-    <div class="stack">
-      <span class="eyebrow">For start-ups and small to medium businesses</span>
-      <h1>Practical AI for busy teams.</h1>
-      <p class="lead">No big transformation project. We find two or three everyday jobs AI can speed up, set them up properly with your team, and make sure they stick.</p>
-      <div class="btns"><a class="btn primary" href="#contact">Book a free 20-minute call</a><a class="btn ghost" href="#biz-packages">See packages</a></div>
-      <p class="small">Prefer email? <strong>business@easystartai.co.uk</strong></p>
-      <div class="who" aria-label="Who we work with"><span>Cafés and shops</span><span>Trades</span><span>Agencies</span><span>Clinics</span><span>Start-ups</span></div>
-    </div>
-    <div class="stack" style="gap:14px">
-      <div class="hero-pip"><svg class="pip pip-hero" aria-hidden="true"><use href="#pip"/></svg><div class="say">"Most teams start with emails and admin. That's where the quick wins are."</div></div>
-      <div class="wins">
-        <table>
-          <thead><tr><th>Everyday job</th><th>How AI helps</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Customer emails</strong></td><td>Drafts replies in your tone. You check and send.</td></tr>
-            <tr><td><strong>Meeting notes</strong></td><td>Turns a recording into actions and owners.</td></tr>
-            <tr><td><strong>Quotes and proposals</strong></td><td>First draft from your template in minutes.</td></tr>
-            <tr><td><strong>Social posts</strong></td><td>A month of posts from one planning chat.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div></section>
-
-  <section><div class="wrap stack" style="gap:32px">
-    <h2>How a project runs</h2>
-    <div class="timeline">
-      <div class="t"><span class="dot">1</span><h3>Free call</h3><p>20 minutes on where the time goes. No pitch.</p></div>
-      <div class="t"><span class="dot">2</span><h3>Short plan</h3><p>Two or three wins, in order, with a fixed price.</p></div>
-      <div class="t"><span class="dot">3</span><h3>Set up</h3><p>We configure the tools with your real work and your data rules.</p></div>
-      <div class="t"><span class="dot">4</span><h3>Train and check in</h3><p>Hands-on training, then a follow-up after a month.</p></div>
-    </div>
-  </div></section>
-
-  <section class="band" id="biz-packages"><div class="wrap stack" style="gap:28px">
-    <h2>Packages <span class="guess">guess prices</span></h2>
-    <div class="grid3">
-      <div class="panel"><span class="pill">Free</span><h3>Discovery call</h3><p class="price">£0</p><p>20 minutes by video to see where AI could help.</p></div>
-      <div class="panel feature"><span class="pill">Most popular</span><h3>Team workshop</h3><p class="price">£350<small> half day</small></p><p>Your team learns hands-on using your own tasks, and leaves with prompts that work.</p></div>
-      <div class="panel"><span class="pill">Project</span><h3>Set-up project</h3><p class="price"><small>from</small> £750</p><p>We build and test one or two AI workflows, and write a simple how-to for staff.</p></div>
-    </div>
-  </div></section>
-
-  <section><div class="wrap grid2" style="align-items:start">
-    <div class="stack"><h2>Common questions</h2><p class="lead">The things business owners usually ask on the first call.</p></div>
-    <div>
-      <details class="faq"><summary>Do we need technical staff?</summary><p>No. We set things up in tools you already use or simple new ones, and train whoever will use them.</p></details>
-      <details class="faq"><summary>Is our data safe?</summary><p>We agree what can and can't go into AI tools before we start, and pick business plans that don't train on your data.</p></details>
-      <details class="faq"><summary>How quickly will we see a difference?</summary><p>Most first wins are working within a couple of weeks of the plan being agreed. <span class="guess">guess</span></p></details>
-      <details class="faq"><summary>What if it doesn't suit us?</summary><p>Then we'll tell you on the free call. There's no point setting up something you won't use.</p></details>
-    </div>
-  </div></section>
-</div>
-
-<!-- PERSONAL -->
-<div class="view" data-view="personal" hidden>
-  <section><div class="wrap stack" style="gap:24px">
-    <div class="hero-pip"><svg class="pip pip-hero" aria-hidden="true"><use href="#pip"/></svg><div class="say">Hi, I'm Pip. What would you like AI to help you with?</div></div>
-    <h1>Start with what you want to do.</h1>
-    <p class="lead">Pick one and we'll show you three easy first steps. No sign-up needed.</p>
-    <div class="goal-picker" id="goals" role="group" aria-label="Choose a goal">
-      <button class="goal" type="button" data-goal="write" aria-pressed="true">Write things faster</button>
-      <button class="goal" type="button" data-goal="organise" aria-pressed="false">Get organised</button>
-      <button class="goal" type="button" data-goal="learn" aria-pressed="false">Learn something new</button>
-      <button class="goal" type="button" data-goal="side" aria-pressed="false">Start a side project</button>
-      <button class="goal" type="button" data-goal="explore" aria-pressed="false">Just explore</button>
-    </div>
-    <div class="goal-steps" aria-live="polite">
-      <h3 id="goalTitle">Write things faster</h3>
-      <ol id="goalList"></ol>
-      <p class="small">Want someone to walk you through it? A <a href="#personal-plans">support plan</a> or a one-off session gets you a real person.</p>
-    </div>
-  </div></section>
-
-  <section class="band" id="helper"><div class="wrap grid2" style="align-items:start">
-    <div class="stack">
-      <span class="eyebrow">Free helper</span>
-      <h2>Ask Pip a quick question</h2>
-      <p>Pip answers simple getting-started questions for free, a few a day <span class="guess">guess</span>. For anything more personal, our support plans put you in touch with a real person.</p>
-      <p class="small">In this preview the answers are pre-written examples. The real helper comes later.</p>
-    </div>
-    <div class="chat">
-      <div class="chat-head"><span style="display:flex;align-items:center;gap:8px"><svg class="pip pip-sm" aria-hidden="true"><use href="#pip"/></svg><strong>Pip</strong></span><span class="small" id="left">3 free questions left today</span></div>
-      <div class="chat-log" id="log" aria-live="polite">
-        <div class="bubble ai">Hi! Ask me anything about getting started with AI. Try one of the suggestions below.</div>
-      </div>
-      <div class="chips" id="chips">
-        <button class="chip" type="button">Which AI tool should I start with?</button>
-        <button class="chip" type="button">Is AI safe to use?</button>
-        <button class="chip" type="button">Can AI help me write a CV?</button>
-      </div>
-      <form class="chat-form" id="chatForm">
-        <input id="chatInput" aria-label="Your question" placeholder="Type a question…" autocomplete="off">
-        <button class="btn primary" type="submit">Ask</button>
-      </form>
-    </div>
-  </div></section>
-
-  <section id="personal-plans"><div class="wrap stack" style="gap:28px">
-    <h2>Support from a real person, with reply times you can count on <span class="guess">guess prices</span></h2>
-    <div class="grid3">
-      <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul></div>
-      <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul></div>
-      <div class="panel"><h3>Priority</h3><p class="price">£69<small> / month</small></p><ul class="ticks"><li>Same-day reply on working days</li><li>A monthly 30-minute call</li><li>Everything in Plus</li></ul></div>
-    </div>
-    <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
-      <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45 <span class="guess">guess</span></p></div>
-      <a class="btn ghost" href="#contact">Book a session</a>
-    </div>
-    <p class="small">Questions about a plan, or already a member? Email <strong>support@easystartai.co.uk</strong></p>
-  </div></section>
-</div>
-
-<!-- PARENTS -->
-<div class="view" data-view="parents" hidden>
-  <section class="par-hero"><div class="wrap grid2" style="align-items:center">
-    <div class="stack">
-      <span class="eyebrow">For parents</span>
-      <h1>Kids and AI: calm, simple, sorted.</h1>
-      <p class="lead">Your kids are probably already using AI for homework, games or chat. That's OK. A few sensible settings and a couple of good conversations go a long way.</p>
-      <div class="btns"><a class="btn primary" href="#checklist">Get the free checklist</a><a class="btn ghost" href="#guides">See the guides</a></div>
-      <p class="small">Got a question? Email <strong>parents@easystartai.co.uk</strong></p>
-    </div>
-    <div class="stack" style="gap:16px">
-      <div class="hero-pip"><svg class="pip pip-hero" aria-hidden="true"><use href="#pip"/></svg><div class="say">A good first question for your child:</div></div>
-      <p class="starter">"Can you show me how you use it? I'd love to try."</p>
-      <p class="small">Curiosity first, rules second. Kids open up far more that way.</p>
-    </div>
-  </div></section>
-
-  <section><div class="wrap stack" style="gap:20px">
-    <h2>What matters at each age</h2>
-    <div class="tabs" role="tablist" aria-label="Age groups">
-      <button class="tab" role="tab" id="tab-young" aria-controls="age-young" aria-selected="true">Under 10</button>
-      <button class="tab" role="tab" id="tab-mid" aria-controls="age-mid" aria-selected="false">10 to 13</button>
-      <button class="tab" role="tab" id="tab-teen" aria-controls="age-teen" aria-selected="false">14 and up</button>
-    </div>
-    <div class="tabpanel grid2" role="tabpanel" id="age-young" aria-labelledby="tab-young">
-      <div class="stack"><h3>What to know</h3><p>Young children mostly meet AI through voice assistants, smart toys and apps. They may think it's a real friend, so explain simply that it's a clever computer program.</p></div>
-      <div class="stack"><h3>What to set up</h3><ul class="ticks"><li>Use AI together, on a shared device</li><li>Turn on child settings for voice assistants</li><li>Check which apps have built-in chat</li></ul></div>
-    </div>
-    <div class="tabpanel grid2" role="tabpanel" id="age-mid" aria-labelledby="tab-mid" hidden>
-      <div class="stack"><h3>What to know</h3><p>This is when chatbots show up for homework. Most popular chatbots set a minimum age, often 13 or older, so check the rules for each one.</p></div>
-      <div class="stack"><h3>What to set up</h3><ul class="ticks"><li>Agree what "using AI for homework" is OK, and what isn't</li><li>Set up family controls on phones and tablets</li><li>Rule of thumb: no names, addresses or photos in chats</li></ul></div>
-    </div>
-    <div class="tabpanel grid2" role="tabpanel" id="age-teen" aria-labelledby="tab-teen" hidden>
-      <div class="stack"><h3>What to know</h3><p>Teens use AI like adults do. The focus shifts from controls to good judgement: checking facts, spotting fakes and knowing when not to share.</p></div>
-      <div class="stack"><h3>What to set up</h3><ul class="ticks"><li>Review privacy settings together</li><li>Talk about fake images and voices</li><li>Keep the door open: "You can always ask me"</li></ul></div>
-    </div>
-  </div></section>
-
-  <section class="band" id="checklist"><div class="wrap grid2" style="align-items:start">
-    <div class="check-preview">
-      <h3>The AI safety checklist</h3>
-      <ul>
-        <li><span class="box"></span>I know which AI apps my child uses</li>
-        <li><span class="box"></span>Family controls are on for each device</li>
-        <li><span class="box"></span>We've agreed what not to share in chats</li>
-        <li><span class="box"></span>We've talked about homework and honesty</li>
-        <li class="fade" aria-hidden="true"><span class="box"></span>Voice assistant settings are checked</li>
-        <li class="fade" aria-hidden="true"><span class="box"></span>We know how to report something odd</li>
-      </ul>
-      <p class="small">Plus 4 more checks in the full list.</p>
-    </div>
-    <div class="stack">
-      <span class="eyebrow">Free download</span>
-      <h2>Get all ten checks</h2>
-      <p>One page, written for busy parents. Enter your email and we'll send it over, with an occasional tip.</p>
-      <form class="form demo-form" data-msg="Thanks! In the live site, the checklist would be emailed to you now.">
-        <label for="cl-email">Your email<input id="cl-email" type="email" required placeholder="you@example.com"></label>
-        <button class="btn primary" type="submit">Send me the checklist</button>
-        <div class="notice" hidden></div>
-      </form>
-    </div>
-  </div></section>
-
-  <section id="guides"><div class="wrap stack" style="gap:28px">
-    <h2>Step-by-step guides <span class="guess">guess titles and prices</span></h2>
-    <div class="grid3">
-      <div class="panel"><span class="pill">Under 10</span><h3>First steps with AI</h3><p>Safe settings for tablets and smart speakers, and how to explain AI to younger kids.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
-      <div class="panel"><span class="pill">10 to 13</span><h3>AI, homework and chatbots</h3><p>School rules, honest use for homework, and chatbot privacy settings.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
-      <div class="panel"><span class="pill">All ages</span><h3>Family set-up guide</h3><p>Phone, tablet, laptop and console controls, one screen at a time.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
-    </div>
-    <div class="panel feature" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
-      <div class="stack" style="gap:4px"><h3>All three guides</h3><p>Save £6 with the bundle.</p></div>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="price">£15</span><a class="btn primary" href="#pricing">Get the bundle</a></div>
-    </div>
-    <p class="small">Help with a guide you've bought? Email <strong>orders@easystartai.co.uk</strong></p>
-  </div></section>
-</div>
-
-<!-- TIPS -->
-<div class="view" data-view="tips" hidden>
-  <section><div class="wrap stack">
-    <span class="eyebrow">Free tips, new ones every week <span class="guess">guess</span></span>
-    <h1>Small tips that make AI easier</h1>
-    <p class="lead">Short and practical. Each one has something to try today.</p>
-    <div class="filters" id="filters" role="group" aria-label="Filter tips">
-      <button class="goal" type="button" data-f="all" aria-pressed="true">All</button>
-      <button class="goal" type="button" data-f="everyone" aria-pressed="false">Everyone</button>
-      <button class="goal" type="button" data-f="business" aria-pressed="false">Business</button>
-      <button class="goal" type="button" data-f="parents" aria-pressed="false">Parents</button>
-    </div>
-  </div></section>
-  <section style="padding-top:0"><div class="wrap grid3" id="tipGrid">
-    <article class="tip" data-cat="everyone"><div class="meta"><span class="pill">Everyone</span><span>1 min</span></div><h3>Say who it's for</h3><p>AI pitches its answer at whoever you say. Tell it the audience and the answer gets clearer straight away.</p><p class="try">Try this</p><p class="prompt">Explain what a pension is to someone who's never had one, in five short sentences.</p></article>
-    <article class="tip" data-cat="everyone"><div class="meta"><span class="pill">Everyone</span><span>1 min</span></div><h3>Let it ask you questions</h3><p>When you're not sure what to ask, let the AI interview you first. The result fits you much better.</p><p class="try">Try this</p><p class="prompt">I want to plan a weekend in York. Before you suggest anything, ask me five questions.</p></article>
-    <article class="tip" data-cat="everyone"><div class="meta"><span class="pill">Everyone</span><span>2 min</span></div><h3>Ask for a second go</h3><p>The first answer is a draft, not the final word. Ask for it shorter, friendlier or in bullet points. It never minds.</p><p class="try">Try this</p><p class="prompt">Make that half the length and a bit warmer.</p></article>
-    <article class="tip" data-cat="everyone"><div class="meta"><span class="pill">Everyone</span><span>1 min</span></div><h3>Check facts that matter</h3><p>AI can sound sure and still be wrong. For health, money or legal things, use it to understand the topic, then check a trusted source.</p><p class="try">Try this</p><p class="prompt">What should I double-check about this answer, and where?</p></article>
-    <article class="tip" data-cat="business"><div class="meta"><span class="pill">Business</span><span>2 min</span></div><h3>Show it an example</h3><p>Paste in one email you're happy with, then ask for replies in the same style. It copies your tone far better than a description does.</p><p class="try">Try this</p><p class="prompt">Here's an email I like: [paste]. Reply to this customer in the same style: [paste].</p></article>
-    <article class="tip" data-cat="business"><div class="meta"><span class="pill">Business</span><span>2 min</span></div><h3>Turn notes into actions</h3><p>After a meeting, paste your rough notes in and get a tidy list of who's doing what, by when.</p><p class="try">Try this</p><p class="prompt">Turn these notes into a table of actions, owners and deadlines: [paste].</p></article>
-    <article class="tip" data-cat="business"><div class="meta"><span class="pill">Business</span><span>1 min</span></div><h3>Keep private data out</h3><p>Don't paste in customer names, bank details or anything confidential unless your AI tool is on a business plan you trust. Swap names for "Customer A".</p><p class="try">Try this</p><p class="prompt">Customer A has asked for a refund on order 1. Draft a polite reply.</p></article>
-    <article class="tip" data-cat="parents"><div class="meta"><span class="pill">Parents</span><span>2 min</span></div><h3>Try it together first</h3><p>Ask a chatbot something silly with your child. It's the easiest way to start talking about how it works and what not to share.</p><p class="try">Try this</p><p class="prompt">Write a short poem about our dog who thinks he's a cat.</p></article>
-    <article class="tip" data-cat="parents"><div class="meta"><span class="pill">Parents</span><span>2 min</span></div><h3>Homework helper, not homework doer</h3><p>Agree that AI can explain and quiz, but the work stays theirs. Most schools are happy with that line.</p><p class="try">Try this</p><p class="prompt">Explain photosynthesis to a 12-year-old, then give me three quiz questions.</p></article>
-    <article class="tip locked" data-cat="everyone"><div class="meta"><span class="pill">Members</span><span>5 min</span></div><h3>A week of meals in 10 minutes</h3><p>Our step-by-step template, ready to copy.</p><a href="#pricing">Unlock with membership →</a></article>
-    <article class="tip locked" data-cat="business"><div class="meta"><span class="pill">Members</span><span>6 min</span></div><h3>Your first AI assistant for work</h3><p>Set up a helper that knows your business, in one sitting.</p><a href="#pricing">Unlock with membership →</a></article>
-  </div></section>
-  <section class="band"><div class="wrap grid2" style="align-items:center">
-    <div class="stack"><h2>Get a tip in your inbox each week</h2><p>Free. One short email. Unsubscribe any time.</p></div>
-    <form class="form demo-form" data-msg="Thanks! In the live site, you'd now be on the weekly tips list.">
-      <label for="tips-email">Your email<input id="tips-email" type="email" required placeholder="you@example.com"></label>
-      <button class="btn primary" type="submit">Send me tips</button>
-      <div class="notice" hidden></div>
-    </form>
-  </div></section>
-</div>
-
-<!-- PRICING -->
-<div class="view" data-view="pricing" hidden>
-  <section><div class="wrap stack" style="gap:24px">
-    <span class="eyebrow">Pricing <span class="guess">all prices are guesses</span></span>
-    <h1>Simple prices, nothing hidden</h1>
-    <p class="lead">Cancel monthly plans any time. Business work is quoted after a free chat.</p>
-    <div class="scroll-x"><table class="cmp">
-      <thead><tr><th>What</th><th>Who it's for</th><th>Price</th><th>Reply time</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Weekly tips</strong></td><td>Everyone</td><td>Free</td><td>–</td></tr>
-        <tr><td><strong>Membership</strong> (extra tips, templates, monthly Q&amp;A)</td><td>Everyone</td><td>£5 / month</td><td>–</td></tr>
-        <tr><td><strong>Starter support</strong></td><td>Individuals</td><td>£15 / month</td><td>2 working days</td></tr>
-        <tr><td><strong>Plus support</strong></td><td>Individuals</td><td>£35 / month</td><td>1 working day</td></tr>
-        <tr><td><strong>Priority support</strong></td><td>Individuals</td><td>£69 / month</td><td>Same working day</td></tr>
-        <tr><td><strong>One-off set-up session</strong></td><td>Individuals</td><td>£45</td><td>Booked call</td></tr>
-        <tr><td><strong>Parent guide</strong> (each)</td><td>Parents</td><td>£7</td><td>Instant download</td></tr>
-        <tr><td><strong>Parent guide bundle</strong></td><td>Parents</td><td>£15</td><td>Instant download</td></tr>
-        <tr><td><strong>Business workshop</strong></td><td>Businesses</td><td>From £350</td><td>Booked</td></tr>
-        <tr><td><strong>Business set-up project</strong></td><td>Businesses</td><td>From £750</td><td>Quoted</td></tr>
-      </tbody>
-    </table></div>
-    <p class="small">In the live site, each item gets its own "Buy" or "Subscribe" button through a secure payment service.</p>
-    <p class="small">Questions about an order? Email <strong>orders@easystartai.co.uk</strong></p>
-  </div></section>
-</div>
-
-<!-- ABOUT -->
-<div class="view" data-view="about" hidden>
-  <section><div class="wrap grid2" style="align-items:start">
-    <div class="stack">
-      <span class="eyebrow">About</span>
-      <h1>Hi, I'm Mike.</h1>
-      <p class="lead">I started Easy Start AI because people kept asking me the same thing: "I know I should be using AI, but where do I even start?"</p>
-      <p>I come from a technical background, and I like making complicated things feel simple. My job is to listen to what you want to do, then help you do it with the right tools, at a pace that suits you. <span class="guess">guess, rewrite in your words</span></p>
-      <div class="btns"><a class="btn primary" href="#contact">Say hello</a></div>
-    </div>
-    <div class="panel"><p class="quote">"AI isn't scary. It's simple once you know what you want."</p><p class="small">The idea behind everything we do.</p></div>
-  </div></section>
-</div>
-
-<!-- CONTACT -->
-<div class="view" data-view="contact" hidden>
-  <section><div class="wrap grid2" style="align-items:start">
-    <div class="stack">
-      <span class="eyebrow">Contact</span>
-      <h1>Let's have a chat</h1>
-      <p class="lead">Tell us a little about what you'd like help with. We'll reply within one working day <span class="guess">guess</span>.</p>
-      <p>Prefer email? <strong>hello@easystartai.co.uk</strong></p>
-    </div>
-    <form class="form demo-form" data-msg="Thanks! In the live site, this message would be sent to Mike's inbox.">
-      <label for="c-name">Your name<input id="c-name" required></label>
-      <label for="c-email">Your email<input id="c-email" type="email" required></label>
-      <label for="c-type">I'm asking about<select id="c-type"><option>My business</option><option>Help for me personally</option><option>Keeping my kids safe</option><option>Something else</option></select></label>
-      <label for="c-msg">What would you like help with?<textarea id="c-msg" placeholder="For example: I'd like to use AI to answer customer emails."></textarea></label>
-      <button class="btn primary" type="submit">Send message</button>
-      <div class="notice" hidden></div>
-    </form>
-  </div></section>
-</div>
-
+<section class="band" id="signup"><div class="wrap signup">
+  <div class="stack">
+    <h2>Be first to know</h2>
+    <p>We'll email you when the site opens, plus the occasional friendly tip. No spam, and you can unsubscribe any time.</p>
+    <p class="small">Prefer to talk now? Email <strong>hello@easystartai.co.uk</strong></p>
+  </div>
+  <form id="notifyForm">
+    <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label for="n-email">Your email<input id="n-email" name="email" type="email" required placeholder="you@example.com"></label>
+    <label for="n-topic">I'm most interested in<select id="n-topic" name="topic"><option value="Business">Help for my business</option><option value="Personal">Help for me personally</option><option value="Parents">Keeping my kids safe</option><option value="General">Just curious</option></select></label>
+    <button class="btn" type="submit">Let me know</button>
+    <div class="notice" id="notice" hidden></div>
+  </form>
+</div></section>
 </main>
 
-<footer><div class="wrap">
-  <span>© 2026 Easy Start AI</span>
-  <nav aria-label="Footer"><a href="#tips">Tips</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><span>Privacy (coming soon)</span></nav>
-</div></footer>
+<footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>hello@easystartai.co.uk</span></div></footer>
 
 <script>
-(function(){
-  const views=[...document.querySelectorAll('[data-view]')];
-  const links=[...document.querySelectorAll('nav.main a')];
-  const nav=document.getElementById('mainNav'), menuBtn=document.getElementById('menuBtn');
-  const anchors={helper:'personal',checklist:'parents',guides:'parents','biz-packages':'business','personal-plans':'personal'};
-  function show(){
-    let h=(location.hash||'#home').slice(1);
-    let view=anchors[h]||h;
-    if(!views.some(v=>v.dataset.view===view)){view='home';h='home';}
-    views.forEach(v=>v.hidden=v.dataset.view!==view);
-    document.body.dataset.section=['business','personal','parents'].includes(view)?view:'';
-    links.forEach(a=>a.getAttribute('href')==='#'+view?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
-    nav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');
-    const target=anchors[h]?document.getElementById(h):null;
-    if(target) target.scrollIntoView({block:'start'}); else window.scrollTo(0,0);
-  }
-  window.addEventListener('hashchange',show);show();
-  menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o);});
-
-  document.querySelectorAll('.demo-form').forEach(f=>f.addEventListener('submit',e=>{
-    e.preventDefault();const n=f.querySelector('.notice');n.textContent=f.dataset.msg;n.hidden=false;f.reset();
-  }));
-
-  // Free helper demo: canned answers, 3-question limit
-  const answers=[
-    [/tool|start|which/i,"A free chatbot like Claude or ChatGPT is a great first step. Pick one, and try it on one real task this week, like drafting an email."],
-    [/safe|privacy|danger|scary/i,"Mostly, yes. A good rule: don't share passwords, bank details or anything you wouldn't post publicly. Our parent guides go into more detail for kids."],
-    [/cv|resume|letter|write|email/i,"Definitely. Paste in your current CV and the job advert, and ask it to suggest improvements. Always read it through and keep it honest."],
-  ];
-  let left=3;const log=document.getElementById('log'),leftEl=document.getElementById('left'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput');
-  function add(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;log.appendChild(b);log.scrollTop=log.scrollHeight;}
-  function ask(q){
-    q=q.trim();if(!q)return;
-    if(left<=0){add("You've used today's free questions. For more help, a support plan gets you a real person with a set reply time.",'ai');addLink();return;}
-    add(q,'you');left--;
-    const hit=answers.find(a=>a[0].test(q));
-    setTimeout(()=>{
-      add(hit?hit[1]:"Good question! That one needs a bit more detail than I can manage. A support plan gets you a proper answer from a real person.",'ai');
-      leftEl.textContent=left>0?left+' free question'+(left===1?'':'s')+' left today':'No free questions left today';
-      if(left===0)addLink();
-    },450);
-  }
-  let linked=false;
-  function addLink(){if(linked)return;linked=true;const a=document.createElement('a');a.href='#pricing';a.className='btn primary';a.style.alignSelf='flex-start';a.textContent='See support plans';log.appendChild(a);log.scrollTop=log.scrollHeight;}
-  form.addEventListener('submit',e=>{e.preventDefault();ask(input.value);input.value='';});
-  document.querySelectorAll('#chips .chip').forEach(c=>c.addEventListener('click',()=>ask(c.textContent)));
-  // Personal: goal picker
-  const goals={
-    write:['Write things faster',["Pick a free chatbot, such as Claude or ChatGPT, and sign up.","Paste in an email you need to send and ask: <span class='prompt'>Make this clearer and friendlier.</span>","Save the wording you like, so you can reuse it next time."]],
-    organise:['Get organised',["Tell the AI what your week looks like, in plain words.","Ask: <span class='prompt'>Turn this into a simple daily plan with breaks.</span>","Each evening, paste in what's left and ask it to re-plan tomorrow."]],
-    learn:['Learn something new',["Name the topic and your level, for example \"total beginner\".","Ask: <span class='prompt'>Teach me this in 10-minute lessons and quiz me after each one.</span>","Ask it to explain anything you get wrong in a different way."]],
-    side:['Start a side project',["Describe your idea in two or three sentences.","Ask: <span class='prompt'>What are the first five small steps, and what could go wrong?</span>","Pick step one and ask the AI to help you do just that."]],
-    explore:['Just explore',["Ask it something you've always wondered about.","Ask it to plan a meal from what's in your fridge.","Ask: <span class='prompt'>What are five ways someone like me could use you?</span>"]]
-  };
-  const gl=document.getElementById('goalList'),gt=document.getElementById('goalTitle');
-  function pick(k){gt.textContent=goals[k][0];gl.innerHTML=goals[k][1].map(s=>'<li>'+s+'</li>').join('');
-    document.querySelectorAll('#goals .goal').forEach(b=>b.setAttribute('aria-pressed',b.dataset.goal===k));}
-  document.querySelectorAll('#goals .goal').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.goal)));pick('write');
-
-  // Parents: age tabs
-  const tabs=[...document.querySelectorAll('[role=tab]')];
-  tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}));
-
-  // Tips filter
-  document.querySelectorAll('#filters .goal').forEach(b=>b.addEventListener('click',()=>{
-    const f=b.dataset.f;document.querySelectorAll('#filters .goal').forEach(x=>x.setAttribute('aria-pressed',x===b));
-    document.querySelectorAll('#tipGrid .tip').forEach(t=>t.hidden=!(f==='all'||t.dataset.cat===f));}));
-})();
+// Sends sign-ups to hello@easystartai.co.uk via Web3Forms. The key is public by design.
+const FORM_KEY='WEB3FORMS_KEY_HERE';
+const form=document.getElementById('notifyForm'),notice=document.getElementById('notice');
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const data=Object.fromEntries(new FormData(form));
+  if(data.botcheck)return;
+  const btn=form.querySelector('button');
+  if(FORM_KEY.indexOf('HERE')>-1){notice.textContent='Sign-up opens very soon. For now, please email hello@easystartai.co.uk and we\'ll add you.';notice.hidden=false;return;}
+  btn.disabled=true;btn.textContent='Sending…';
+  try{
+    const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({access_key:FORM_KEY,subject:'['+data.topic+'] Coming soon sign-up',from_name:'Easy Start AI website',email:data.email,replyto:data.email,topic:data.topic})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.success===false)throw new Error();
+    notice.textContent='Thanks! We\'ll be in touch when the site opens.';form.reset();
+  }catch(err){notice.textContent='Sorry, that didn\'t send. Please try again, or email hello@easystartai.co.uk.';}
+  notice.hidden=false;btn.disabled=false;btn.textContent='Let me know';
+});
 </script>
 </body>
 </html>

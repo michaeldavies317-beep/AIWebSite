@@ -4,4 +4,7 @@ The website for Mike's friendly AI help business. It's a single page, `index.htm
 
 Hosted on Cloudflare Pages: any change saved here goes live automatically.
 
-The password lock is switched off for now. Search engines are still asked not to list the site (robots.txt and a noindex tag). The old lock code is in the git history if we want it back.
+## Branches
+- `main` is the public site at easystartai.co.uk. Right now it's a "coming soon" page.
+- `dev` holds the full site while it's being finished. Cloudflare shows it as a preview at dev.aiwebsite-akt.pages.dev, hidden from search engines.
+- When the full site is ready, `dev` is merged into `main` (remember to allow search engines in robots.txt and remove the noindex tag at that point).
