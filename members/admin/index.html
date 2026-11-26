@@ -34,6 +34,7 @@
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
     <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
     <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
+    <button class="btn ghost" id="pipTest" type="button">Send a test question</button>
   </div>
   <div id="pipStatus" class="note" aria-live="polite">Loading…</div>
   <div id="pipBody" hidden class="stack" style="gap:16px">
@@ -88,6 +89,14 @@
     const gb=document.getElementById('pipGaps');gb.innerHTML='';
     gaps.forEach(r=>{const tr=document.createElement('tr');cell(tr,r.day);cell(tr,r.section);cell(tr,r.question);gb.appendChild(tr);});
   }
+  document.getElementById('pipTest').addEventListener('click',async()=>{
+    st.hidden=false;st.textContent='Sending a test question…';
+    try{const r=await fetch('/api/pip-log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({s:'test',q:'Test question from the admin page',m:0,o:0})});
+      const res=r.headers.get('x-pip-log')||('no answer (code '+r.status+')');
+      if(res==='saved'){m.value=new Date().toISOString().slice(0,7);await load();}
+      else st.textContent='Test result: '+res+'. Please send this message to Claude.';
+    }catch(e){st.textContent='Test result: could not reach the log ('+e.message+'). Please send this message to Claude.';}
+  });
   m.addEventListener('change',load);load();
 })();
 </script>
