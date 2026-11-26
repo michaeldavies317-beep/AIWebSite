@@ -431,7 +431,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
       <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45</p></div>
-      <a class="btn ghost" href="#contact">Book a session</a>
+      <a class="btn ghost" data-pay="session" href="#contact">Book a session</a>
     </div>
     <p class="small">Questions about a plan, or already a member? Email <strong>support@easystartai.co.uk</strong></p>
   </div></section>
@@ -504,13 +504,13 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   <section id="guides"><div class="wrap stack" style="gap:28px">
     <h2>Step-by-step guides <span class="guess">guess titles and prices</span></h2>
     <div class="grid3">
-      <div class="panel"><span class="pill">Under 10</span><h3>First steps with AI</h3><p>Safe settings for tablets and smart speakers, and how to explain AI to younger kids.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
-      <div class="panel"><span class="pill">10 to 13</span><h3>AI, homework and chatbots</h3><p>School rules, honest use for homework, and chatbot privacy settings.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
-      <div class="panel"><span class="pill">All ages</span><h3>Family set-up guide</h3><p>Phone, tablet, laptop and console controls, one screen at a time.</p><p class="price">£7</p><a class="btn ghost" href="#pricing">Buy guide</a></div>
+      <div class="panel"><span class="pill">Under 10</span><h3>First steps with AI</h3><p>Safe settings for tablets and smart speakers, and how to explain AI to younger kids.</p><p class="price">£7</p><a class="btn ghost" data-pay="guide_under10" href="#pricing">Buy guide</a></div>
+      <div class="panel"><span class="pill">10 to 13</span><h3>AI, homework and chatbots</h3><p>School rules, honest use for homework, and chatbot privacy settings.</p><p class="price">£7</p><a class="btn ghost" data-pay="guide_10to13" href="#pricing">Buy guide</a></div>
+      <div class="panel"><span class="pill">All ages</span><h3>Family set-up guide</h3><p>Phone, tablet, laptop and console controls, one screen at a time.</p><p class="price">£7</p><a class="btn ghost" data-pay="guide_family" href="#pricing">Buy guide</a></div>
     </div>
     <div class="panel feature" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
       <div class="stack" style="gap:4px"><h3>All three guides</h3><p>Save £6 with the bundle.</p></div>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="price">£15</span><a class="btn primary" href="#pricing">Get the bundle</a></div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="price">£15</span><a class="btn primary" data-pay="guide_bundle" href="#pricing">Get the bundle</a></div>
     </div>
     <p class="small">Help with a guide you've bought? Email <strong>orders@easystartai.co.uk</strong></p>
   </div></section>
@@ -563,7 +563,6 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
       <thead><tr><th>What</th><th>Who it's for</th><th>Price</th><th>Reply time</th></tr></thead>
       <tbody>
         <tr><td><strong>Weekly tips</strong></td><td>Everyone</td><td>Free</td><td>–</td></tr>
-        <tr><td><strong>Membership</strong> (extra tips, templates, monthly Q&amp;A)</td><td>Everyone</td><td>£5 / month</td><td>–</td></tr>
         <tr><td><strong>Starter support</strong></td><td>Individuals</td><td>£15 / month</td><td>2 working days</td></tr>
         <tr><td><strong>Plus support</strong></td><td>Individuals</td><td>£35 / month</td><td>1 working day</td></tr>
         <tr><td><strong>Custom package</strong></td><td>Individuals</td><td><a class="pkg-time" href="#contact">Get in touch</a></td><td>After a free discovery call</td></tr>
@@ -741,7 +740,18 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   syncPkg();
 
   // Membership: Stripe Payment Links. Paste Mike's links here once he makes them in Stripe.
-  const JOIN={starter:'STRIPE_STARTER_LINK',plus:'STRIPE_PLUS_LINK'};
+  /* Stripe Payment Links. TEST links for now: swap each for the live link before launch. */
+  const PAY={
+    starter:'https://buy.stripe.com/test_3cI5kDbRhdL1e0T7f85AQ00',
+    plus:'https://buy.stripe.com/test_5kQ00j5sT8qH2ib42W5AQ01',
+    session:'https://buy.stripe.com/test_aFa6oH2gH22j1e76b45AQ02',
+    guide_under10:'https://buy.stripe.com/test_7sYeVd2gH0Yf3mf5705AQ03',
+    guide_10to13:'https://buy.stripe.com/test_eVqaEX6wXbCTf4X2YS5AQ04',
+    guide_family:'https://buy.stripe.com/test_3cIbJ18F57mDaOH1UO5AQ05',
+    guide_bundle:'https://buy.stripe.com/test_4gMeVd08zgXd3mffLE5AQ06'
+  };
+  document.querySelectorAll('[data-pay]').forEach(a=>{const u=PAY[a.dataset.pay];if(u&&u.startsWith('https://')){a.href=u;a.rel='noopener';}});
+  const JOIN={starter:PAY.starter,plus:PAY.plus};
   document.querySelectorAll('.join[data-plan]').forEach(a=>{const u=JOIN[a.dataset.plan];if(u.startsWith('https://')){a.href=u;a.rel='noopener';}
     else a.addEventListener('click',()=>{cType.value='Personal';syncPkg();const m=document.getElementById('c-msg');if(!m.value)m.value='I\'d like to join the '+(a.dataset.plan==='plus'?'Plus':'Starter')+' plan.';});});
 
