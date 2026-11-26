@@ -241,7 +241,7 @@
     const b=document.createElement('td');b.textContent=COLOURS[p.theme];tr.appendChild(b);
     const c=document.createElement('td');c.style.whiteSpace='nowrap';
     const pv=document.createElement('a');pv.className='btn ghost';pv.href='/admin/email?preview='+encodeURIComponent(p.key);pv.target='_blank';pv.rel='noopener';pv.textContent='Preview';c.appendChild(pv);
-    const tbn=document.createElement('button');tbn.className='btn ghost';tbn.type='button';tbn.textContent='Send me a test';tbn.style.marginLeft='8px';tbn.disabled=!d.setup.brevoKey;
+    const tbn=document.createElement('button');tbn.className='btn ghost';tbn.type='button';tbn.textContent='Send me a test';tbn.style.marginLeft='8px';
     tbn.addEventListener('click',async()=>{tbn.disabled=true;const r=await post({action:'test',key:p.key});$('emTestMsg').hidden=false;$('emTestMsg').textContent=r.message||r.error;tbn.disabled=false;});
     c.appendChild(tbn);tr.appendChild(c);wt.appendChild(tr);});
   // "New this month" writer
