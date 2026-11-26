@@ -1,4 +1,5 @@
 // POST /api/pip-chat -> Pip's real AI answers, using Claude Haiku from Anthropic.
+// Calls the Claude API directly over HTTPS, so the site still has no build step or npm packages.
 //
 // What it needs in Cloudflare (Workers & Pages > aiwebsite > Settings > Variables and secrets):
 //   ANTHROPIC_API_KEY  (Secret)  the key from console.anthropic.com
@@ -16,7 +17,6 @@
 //   - A site-wide daily cap, so a flood of visitors can never run up a big bill.
 //   - Short answers only (max_tokens), and only the last few messages are sent.
 //   - Only answers requests that come from our own site.
-import Anthropic from '@anthropic-ai/sdk';
 import { redact, saveQuestion } from './pip-log.js';
 
 const MODEL = 'claude-haiku-5-5';
@@ -136,28 +136,34 @@ export async function onRequestPost({ request, env }) {
   }
   if (allowance === 'site') return json({ fallback: true, why: 'site-cap' });
 
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 20000 });
   const system = BASE_PROMPT + (SECTION_NOTES[section] ? '\n\n' + SECTION_NOTES[section] : '');
 
+  // Out of credit, bad key, Anthropic busy, etc.: the page falls back to pre-written answers.
+  const WHY = { 401: 'bad-key', 402: 'out-of-credit', 403: 'no-permission', 429: 'busy' };
   let response;
   try {
-    response = await client.messages.create({
-      model: MODEL,
-      max_tokens: 400,
-      thinking: { type: 'disabled' },
-      output_config: { effort: 'low' },
-      system,
-      messages: [...cleanHistory(body.history), { role: 'user', content: q }],
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2026-10-21' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 400,
+        thinking: { type: 'disabled' },
+        output_config: { effort: 'low' },
+        system,
+        messages: [...cleanHistory(body.history), { role: 'user', content: q }],
+      }),
+      signal: AbortSignal.timeout(20000),
     });
+    if (!r.ok) {
+      let type = '';
+      try { type = ((await r.json()).error || {}).type || ''; } catch (e) { /* not JSON */ }
+      const why = type === 'billing_error' ? 'out-of-credit' : WHY[r.status] || 'api-error-' + r.status + (type ? '-' + type : '');
+      return json({ fallback: true, why, counted: true });
+    }
+    response = await r.json();
   } catch (e) {
-    // Out of credit, bad key, Anthropic busy, etc. The page falls back to pre-written answers.
-    let why = 'api-error';
-    if (e instanceof Anthropic.AuthenticationError) why = 'bad-key';
-    else if (e instanceof Anthropic.PermissionDeniedError) why = 'no-permission';
-    else if (e instanceof Anthropic.RateLimitError) why = 'busy';
-    else if (e instanceof Anthropic.APIConnectionError) why = 'no-connection';
-    else if (e instanceof Anthropic.APIError) why = e.status === 402 ? 'out-of-credit' : 'api-error-' + e.status;
-    return json({ fallback: true, why, counted: true });
+    return json({ fallback: true, why: 'no-connection', counted: true });
   }
 
   if (response.stop_reason === 'refusal') {
