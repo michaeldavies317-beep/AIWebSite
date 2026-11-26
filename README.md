@@ -13,7 +13,10 @@ The password lock is switched off for now. Search engines are still asked not to
 - Set up Cloudflare Access for easystartai.co.uk/members paths (same apps as on dev).
 - Check CF_API_TOKEN (secret) and CF_ACCOUNT_ID (text) exist for the **Production** environment too (Pages Settings, environment dropdown). dev uses the Preview copies; the live site needs Production ones or the library can't show plans. Test at easystartai.co.uk/members/me (should say "configured":true).
 - Switch on search indexing: remove the noindex tag and allow robots.txt.
-- Check the Privacy page (/privacy/) wording, add a legal name and ICO registration number.
+- Legal pages (/privacy/, /terms/, /cookies/): fill every amber [PLACEHOLDER] (legal name, business address, ICO number, member set-up time, login session length, cancel method, plan reminder timing), then remove the "Draft, not legal advice" banner.
+- Register as a sole trader with HMRC for Self Assessment (gov.uk/register-for-self-assessment). Deadline is 5 October after the end of the first tax year you trade in.
+- Pay the ICO data protection fee (ico.org.uk/fee, about £52 a year) and put the registration number on the Privacy page.
+- Stripe Payment Links: turn on "require customers to accept your terms" (link to /terms/), so the digital-content cooling-off waiver is recorded.
 - Admin site, live version (admin.easystartai.co.uk), in this order:
   1. Zero Trust > Access controls > Applications > Add > Self-hosted. Name `Admin (live)`, Subdomain `admin`, Domain `easystartai.co.uk`, Path blank. Policy **Mike only**. Identity: One-time PIN only, Instant Auth on.
   2. Workers & Pages > aiwebsite > Custom domains > Set up a custom domain > `admin.easystartai.co.uk`. Leave the DNS target as `aiwebsite-akt.pages.dev` (the live site).
