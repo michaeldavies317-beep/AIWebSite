@@ -104,6 +104,7 @@ footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:1
   </div>
   <form id="notifyForm">
     <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label for="n-name">Your name<input id="n-name" name="name" required autocomplete="name"></label>
     <label for="n-email">Your email<input id="n-email" name="email" type="email" required placeholder="you@example.com"></label>
     <label for="n-topic">I'm most interested in<select id="n-topic" name="topic"><option value="Business">Help for my business</option><option value="Personal">Help for me personally</option><option value="Parents">Keeping my kids safe</option><option value="General">Just curious</option></select></label>
     <button class="btn" type="submit">Let me know</button>
@@ -127,7 +128,7 @@ form.addEventListener('submit',async e=>{
   btn.disabled=true;btn.textContent='Sending…';
   try{
     const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({access_key:FORM_KEY,subject:'['+data.topic+'] Coming soon sign-up',from_name:'Easy Start AI website',email:data.email,replyto:data.email,topic:data.topic})});
+      body:JSON.stringify({access_key:FORM_KEY,subject:'['+data.topic+'] Coming soon sign-up from '+data.name,name:data.name,from_name:'Easy Start AI website',email:data.email,replyto:data.email,topic:data.topic})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok||j.success===false)throw new Error();
     notice.textContent='Thanks! We\'ll be in touch when the site opens.';form.reset();
