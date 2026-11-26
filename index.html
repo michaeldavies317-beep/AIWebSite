@@ -221,6 +221,22 @@ details.faq p{margin-top:8px;color:var(--muted)}
 .journey p{color:var(--muted)}
 .handoff{display:flex;gap:8px;flex-wrap:wrap}
 .handoff .btn{padding:8px 16px;font-size:.92rem}
+.pip-launcher{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:10px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 16px 6px 6px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 10px 30px -12px rgba(15,40,35,.45);transition:transform .15s}
+.pip-launcher:hover{transform:translateY(-2px)}
+.pip-launcher .pip{width:44px;height:44px}
+body[data-section="business"] .pip-launcher{padding:6px}
+body[data-section="business"] .pip-launcher .pl-label{display:none}
+.pip-panel{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;width:min(380px,calc(100vw - 32px));max-height:min(620px,calc(100vh - 100px));display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(15,40,35,.5)}
+.pip-panel .chat-log{flex:1;min-height:160px;max-height:none}
+.pip-panel .chips{padding:0 14px 10px}
+.pip-min{background:none;border:1px solid var(--line);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:1.2rem;line-height:1;cursor:pointer}
+.pip-note{padding:0 14px 10px;font-size:.78rem}
+.pip-cta{align-self:center}
+@media (max-width:600px){
+  .pip-launcher .pl-label{display:none}
+  .pip-launcher{padding:6px}
+  .pip-panel{left:0;right:0;bottom:0;width:100%;max-height:85vh;border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}
+}
 .filters{display:flex;gap:8px;flex-wrap:wrap}
 .tip .try{font-size:.85rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
 </style>
@@ -295,6 +311,7 @@ details.faq p{margin-top:8px;color:var(--muted)}
       <span class="eyebrow">Meet Pip</span>
       <h2>Your guide from "where do I start?" to "I've got this."</h2>
       <p>Pip is the friendly face of Easy Start AI. Pip answers quick questions, suggests a sensible first step, and knows when it's time to bring in a real person.</p>
+      <button class="btn primary open-pip" type="button" style="align-self:flex-start">Chat with Pip</button>
     </div>
     <ol class="journey">
       <li><span class="j-step">Where do I start?</span><p>Ask Pip anything, in plain words. No question is too basic.</p></li>
@@ -393,23 +410,12 @@ details.faq p{margin-top:8px;color:var(--muted)}
     <div class="stack">
       <span class="eyebrow">Free helper</span>
       <h2>Ask Pip a quick question</h2>
-      <p>Pip answers simple getting-started questions for free, a few a day <span class="guess">guess</span>. For anything more personal, our support plans put you in touch with a real person.</p>
+      <p>Pip answers simple getting-started questions for free, a few a day <span class="guess">guess</span>, from any page on the site. For anything more personal, our support plans put you in touch with a real person.</p>
       <p class="small">In this preview the answers are pre-written examples. The real helper comes later.</p>
     </div>
-    <div class="chat">
-      <div class="chat-head"><span style="display:flex;align-items:center;gap:8px"><svg class="pip pip-sm" aria-hidden="true"><use href="#pip"/></svg><strong>Pip</strong></span><span class="small" id="left">3 free questions left today</span></div>
-      <div class="chat-log" id="log" aria-live="polite">
-        <div class="bubble ai">Hi, I'm Pip! Ask me anything about getting started with AI. If you need more than a quick answer, I'll point you to Mike.</div>
-      </div>
-      <div class="chips" id="chips">
-        <button class="chip" type="button">Which AI tool should I start with?</button>
-        <button class="chip" type="button">Is AI safe to use?</button>
-        <button class="chip" type="button">Can AI help me write a CV?</button>
-      </div>
-      <form class="chat-form" id="chatForm">
-        <input id="chatInput" aria-label="Your question" placeholder="Type a question…" autocomplete="off">
-        <button class="btn primary" type="submit">Ask</button>
-      </form>
+    <div class="panel pip-cta">
+      <div class="hero-pip"><svg class="pip pip-hero" aria-hidden="true"><use href="#pip"/></svg><div class="say">Pip lives in the corner of every page. Tap the bubble any time, or start here.</div></div>
+      <button class="btn primary open-pip" type="button">Chat with Pip</button>
     </div>
   </div></section>
 
@@ -421,7 +427,7 @@ details.faq p{margin-top:8px;color:var(--muted)}
       <div class="panel"><h3>Priority</h3><p class="price">£69<small> / month</small></p><ul class="ticks"><li>Same-day reply on working days</li><li>A monthly 30-minute call</li><li>Everything in Plus</li></ul></div>
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
-      <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45 <span class="guess">guess</span></p></div>
+      <div class="stack" style="gap:4px"><h3>Just need a hand once?</h3><p>A one-hour video call to get you set up for one thing. £45</p></div>
       <a class="btn ghost" href="#contact">Book a session</a>
     </div>
     <p class="small">Questions about a plan, or already a member? Email <strong>support@easystartai.co.uk</strong></p>
@@ -609,6 +615,20 @@ details.faq p{margin-top:8px;color:var(--muted)}
 
 </main>
 
+<button class="pip-launcher" id="pipLauncher" type="button" aria-controls="pipPanel" aria-expanded="false"><svg class="pip" aria-hidden="true"><use href="#pip"/></svg><span class="pl-label">Chat with Pip</span></button>
+<section class="pip-panel" id="pipPanel" role="dialog" aria-label="Chat with Pip" hidden>
+  <div class="chat-head"><span style="display:flex;align-items:center;gap:8px"><svg class="pip pip-sm" aria-hidden="true"><use href="#pip"/></svg><span><strong>Pip</strong><br><span class="small" id="left">3 free questions left today</span></span></span><button class="pip-min" id="pipMin" type="button" aria-label="Minimise chat">&#8211;</button></div>
+  <div class="chat-log" id="log" aria-live="polite">
+    <div class="bubble ai">Hi, I'm Pip! Ask me anything about getting started with AI. If you need more than a quick answer, I'll point you to Mike.</div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <form class="chat-form" id="chatForm">
+    <input id="chatInput" aria-label="Your question" placeholder="Type a question…" autocomplete="off">
+    <button class="btn primary" type="submit">Ask</button>
+  </form>
+  <p class="small pip-note">Preview: Pip's answers are pre-written examples for now.</p>
+</section>
+
 <footer><div class="wrap">
   <span>© 2026 Easy Start AI</span>
   <nav aria-label="Footer"><a href="#tips">Tips</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><span>Privacy (coming soon)</span></nav>
@@ -654,36 +674,67 @@ details.faq p{margin-top:8px;color:var(--muted)}
     n.hidden=false;btn.disabled=false;btn.textContent=label;
   }));
 
-  // Free helper demo: canned answers, 3-question limit
+  // Pip chat: one floating helper on every page, one shared daily allowance
   const answers=[
+    [/save.*time|where could|team time|admin/i,"Most small teams start with customer emails, meeting notes and quotes. Those are repetitive, so AI saves time from day one. A free discovery call is the quickest way to find yours."],
+    [/data|confidential|gdpr|secure/i,"Good thing to ask. Use business plans that don't train on your data, and agree what can and can't go into AI tools. We set those rules with you before anything else."],
+    [/discovery|call involve|free call/i,"It's a relaxed 20-minute video call. You tell us where the time goes, we suggest two or three quick wins. No pitch, and no obligation."],
+    [/kids|child|apps.*ok|age/i,"Most popular chatbots set a minimum age, often 13 or older. For younger kids, use AI together on a shared device. The age tabs on our Parents page explain what matters when."],
+    [/family control|parental|set up controls/i,"Start with the controls built into your phone or tablet (Screen Time on Apple, Family Link on Android). Our Family set-up guide walks through each device step by step."],
+    [/homework/i,"A good rule: AI can explain and quiz, but the work stays theirs. Try asking it to explain a topic for their age, then give three quiz questions."],
     [/tool|start|which/i,"A free chatbot like Claude or ChatGPT is a great first step. Pick one, and try it on one real task this week, like drafting an email."],
     [/safe|privacy|danger|scary/i,"Mostly, yes. A good rule: don't share passwords, bank details or anything you wouldn't post publicly. Our parent guides go into more detail for kids."],
     [/cv|resume|letter|write|email/i,"Definitely. Paste in your current CV and the job advert, and ask it to suggest improvements. Always read it through and keep it honest."],
   ];
-  let left=3;const log=document.getElementById('log'),leftEl=document.getElementById('left'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput');
+  const prompts={
+    business:['Where could AI save my team time?','Is our data safe with AI?','What does a discovery call involve?'],
+    parents:['Which AI apps are OK for kids?','How do I set up family controls?','Can AI help with homework?'],
+    other:['Which AI tool should I start with?','Is AI safe to use?','Can AI help me write a CV?']
+  };
+  const MAX=3,today=new Date().toISOString().slice(0,10);
+  let used=0;try{const st=JSON.parse(localStorage.getItem('pipUsed')||'{}');if(st.d===today)used=st.n||0;}catch(e){}
+  const save=()=>{try{localStorage.setItem('pipUsed',JSON.stringify({d:today,n:used}));}catch(e){}};
+  const log=document.getElementById('log'),leftEl=document.getElementById('left'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput'),chips=document.getElementById('chips');
+  const panel=document.getElementById('pipPanel'),launcher=document.getElementById('pipLauncher');
+  const section=()=>document.body.dataset.section||'other';
+  const showLeft=()=>{const l=MAX-used;leftEl.textContent=l>0?l+' free question'+(l===1?'':'s')+' left today':'No free questions left today';};
+  function renderChips(){const list=prompts[section()]||prompts.other;chips.innerHTML='';list.forEach(t=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=t;c.addEventListener('click',()=>ask(t));chips.appendChild(c);});}
   function add(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;log.appendChild(b);log.scrollTop=log.scrollHeight;}
+  function handoff(){
+    const d=document.createElement('div');d.className='handoff';
+    d.innerHTML=section()==='business'
+      ?'<a class="btn primary pkg" href="#contact" data-package="Discovery call">Book a free call</a><a class="btn ghost" href="#biz-packages">See packages</a>'
+      :'<a class="btn primary" href="#contact">Message Mike</a><a class="btn ghost" href="#personal-plans">See support plans</a>';
+    log.appendChild(d);log.scrollTop=log.scrollHeight;
+  }
   function ask(q){
     q=q.trim();if(!q)return;
-    if(left<=0){add("That's all my free questions for today. For more help, Mike can take it from here, or a support plan gets you a real person with a set reply time.",'ai');addLink();return;}
-    add(q,'you');left--;
+    add(q,'you');
+    if(used>=MAX){setTimeout(()=>{add(section()==='business'?"That's all my free questions for today. A free discovery call with Mike is the best next step.":"That's all my free questions for today. For more help, Mike can take it from here, or a support plan gets you a real person with a set reply time.",'ai');handoff();},300);return;}
+    used++;save();
     const hit=answers.find(a=>a[0].test(q));
     setTimeout(()=>{
-      add(hit?hit[1]:"Good question! That one needs a human touch. Mike can help you properly, either with a quick message or through a support plan.",'ai');
-      if(!hit)addLink();
-      leftEl.textContent=left>0?left+' free question'+(left===1?'':'s')+' left today':'No free questions left today';
-      if(left===0)addLink();
+      add(hit?hit[1]:(section()==='business'?"Good question! That one is best answered on a free discovery call, where Mike can look at how your business works.":"Good question! That one needs a human touch. Mike can help you properly, either with a quick message or through a support plan."),'ai');
+      if(!hit||used>=MAX)handoff();
+      showLeft();
     },450);
   }
-  let linked=false;
-  function addLink(){if(linked)return;linked=true;const d=document.createElement('div');d.className='handoff';d.innerHTML='<a class="btn primary" href="#contact">Message Mike</a><a class="btn ghost" href="#personal-plans">See support plans</a>';log.appendChild(d);log.scrollTop=log.scrollHeight;}
+  function openPip(){panel.hidden=false;launcher.hidden=true;launcher.setAttribute('aria-expanded','true');renderChips();setTimeout(()=>input.focus(),50);}
+  function closePip(){panel.hidden=true;launcher.hidden=false;launcher.setAttribute('aria-expanded','false');launcher.focus();}
+  launcher.addEventListener('click',openPip);
+  document.getElementById('pipMin').addEventListener('click',closePip);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)closePip();});
+  document.addEventListener('click',e=>{if(e.target.closest('.open-pip'))openPip();if(e.target.closest('#log a'))closePip();});
+  window.addEventListener('hashchange',()=>{if(!panel.hidden)renderChips();});
   form.addEventListener('submit',e=>{e.preventDefault();ask(input.value);input.value='';});
-  document.querySelectorAll('#chips .chip').forEach(c=>c.addEventListener('click',()=>ask(c.textContent)));
+  showLeft();renderChips();
+
   // Business: quote buttons preselect the package on the Contact form
   const cType=document.getElementById('c-type'),cPkg=document.getElementById('c-package'),cPkgWrap=document.getElementById('c-package-wrap');
   const syncPkg=()=>{cPkgWrap.hidden=cType.value!=='Business';};
   cType.addEventListener('change',syncPkg);
-  document.querySelectorAll('.pkg[data-package]').forEach(a=>a.addEventListener('click',()=>{cType.value='Business';cPkg.value=a.dataset.package;syncPkg();
-    const m=document.getElementById('c-msg');if(!m.value)m.placeholder=a.dataset.package==='Discovery call'?'Tell us a little about your business and what takes up your time.':'Tell us about your team and what you\'d like from the '+a.dataset.package.toLowerCase()+'.';}));
+  document.addEventListener('click',e=>{const a=e.target.closest('.pkg[data-package]');if(!a)return;cType.value='Business';cPkg.value=a.dataset.package;syncPkg();
+    const m=document.getElementById('c-msg');if(!m.value)m.placeholder=a.dataset.package==='Discovery call'?'Tell us a little about your business and what takes up your time.':'Tell us about your team and what you\'d like from the '+a.dataset.package.toLowerCase()+'.';});
   syncPkg();
 
   // Personal: goal picker
