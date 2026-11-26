@@ -20,6 +20,15 @@
   <h1>Mike's admin</h1>
   <p class="lead">Your private tools. This whole address is locked, so only you can get in.</p>
 </div>
+<section class="stack" id="auto" style="gap:16px">
+  <h2>Automatic list changes</h2>
+  <p class="lead">When someone pays, the site adds their email to the right list for you. When a plan runs out after a cancel, it takes them off. Anything marked <strong>NEEDS YOU</strong> has to be done by hand.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="autoRefresh" type="button">Refresh</button><span class="small" id="autoUpdated"></span></div>
+  <div id="autoSetup" class="note" hidden></div>
+  <div id="autoStatus" class="note" aria-live="polite">Loading…</div>
+  <div class="tablebox" id="autoBox" hidden><table><thead><tr><th>When (UK)</th><th>What happened</th><th>Email</th><th>List</th><th>Result</th></tr></thead><tbody id="autoRows"></tbody></table></div>
+</section>
+
 <section class="stack" id="buys" style="gap:16px">
   <h2>Recent purchases</h2>
   <p class="lead">The last 30 paid orders from Stripe, newest first, and which list to add each buyer to in Zero Trust (Reusable components &gt; Lists).</p>
@@ -154,6 +163,30 @@
     tb.innerHTML='';rows.forEach(r=>{const tr=document.createElement('tr');
       td(tr,new Date(r.when).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));td(tr,r.name);td(tr,r.email);td(tr,r.product);td(tr,r.amount);
       const c=document.createElement('td');const b=document.createElement('strong');b.textContent=r.list;c.appendChild(b);tr.appendChild(c);tb.appendChild(tr);});
+    box.hidden=false;
+  }
+  btn.addEventListener('click',async()=>{btn.disabled=true;await load();btn.disabled=false;});
+  load();
+})();
+</script>
+<script>
+// Automatic list changes (written by /api/stripe-webhook).
+(()=>{const st=document.getElementById('autoStatus'),setup=document.getElementById('autoSetup'),box=document.getElementById('autoBox'),tb=document.getElementById('autoRows'),btn=document.getElementById('autoRefresh'),upd=document.getElementById('autoUpdated');
+  const td=(tr,t,strong)=>{const c=document.createElement('td');if(strong){const b=document.createElement('strong');b.textContent=t;c.appendChild(b);}else c.textContent=t;tr.appendChild(c);};
+  const NAMES={webhookSecret:'STRIPE_WEBHOOK_SECRET',listToken:'CF_LIST_TOKEN',accountId:'CF_ACCOUNT_ID',stripeReadKey:'STRIPE_READ_KEY',database:'PIP_DB database'};
+  async function load(){
+    st.hidden=false;st.textContent='Loading…';box.hidden=true;
+    let d;try{d=await (await fetch('/admin/list-log',{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the log. Try Refresh.';return;}
+    finally{upd.textContent='Last updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+    const missing=Object.keys(NAMES).filter(k=>d.setup&&!d.setup[k]);
+    setup.hidden=!missing.length;setup.textContent=missing.length?'Not fully switched on yet. Missing in Cloudflare Pages: '+missing.map(k=>NAMES[k]).join(', ')+' (see the setup guide, Part 10).':'';
+    if(d.error){st.textContent='Problem reading the log: '+d.error+'. Please send this message to Claude.';return;}
+    const rows=d.rows||[];
+    if(!rows.length){st.textContent='Nothing yet. Changes appear here after the next purchase or plan ending.';return;}
+    st.hidden=true;tb.innerHTML='';
+    rows.forEach(r=>{const tr=document.createElement('tr');
+      td(tr,new Date(r.at.replace(' ','T')+'Z').toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+      td(tr,r.event);td(tr,r.email);td(tr,r.list);td(tr,r.result,/NEEDS YOU|ERROR/.test(r.result));tb.appendChild(tr);});
     box.hidden=false;
   }
   btn.addEventListener('click',async()=>{btn.disabled=true;await load();btn.disabled=false;});
