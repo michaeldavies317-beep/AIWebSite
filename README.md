@@ -15,7 +15,9 @@ The password lock is switched off for now. Search engines are still asked not to
 - Set up Cloudflare Access for easystartai.co.uk/members paths (same apps as on dev).
 - Check CF_API_TOKEN (secret) and CF_ACCOUNT_ID (text) exist for the **Production** environment too (Pages Settings, environment dropdown). dev uses the Preview copies; the live site needs Production ones or the library can't show plans. Test at easystartai.co.uk/members/me (should say "configured":true).
 - Switch on search indexing: remove the noindex tag and allow robots.txt.
-- Legal pages (/privacy/, /terms/, /cookies/): fill every amber [PLACEHOLDER] (legal name, ICO number, login session length, cancel method, plan reminder timing), then remove the "Draft, not legal advice" banner.
+- Legal pages (/privacy/, /terms/, /cookies/): fill every amber [PLACEHOLDER] (legal name, ICO number, cancel method,), then remove the "Draft, not legal advice" banner.
+- Cloudflare Access: set Session duration to 30 days on every members app (the Cookies page says 30 days).
+- Stripe: Settings > Billing > Subscriptions and emails, turn on "Send emails about upcoming renewals" 7 days before (the Terms promise this).
 - Replace the interim address "Wistaston, Cheshire East, CW2" on /privacy/ and /terms/ with the full business address.
 - Register as a sole trader with HMRC for Self Assessment (gov.uk/register-for-self-assessment). Deadline is 5 October after the end of the first tax year you trade in.
 - Pay the ICO data protection fee (ico.org.uk/fee, about £52 a year) and put the registration number on the Privacy page.

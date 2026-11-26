@@ -35,8 +35,8 @@
   <thead><tr><th>Name</th><th>Type</th><th>Set by</th><th>What it's for</th><th>How long</th></tr></thead>
   <tbody>
     <tr><td><code>pipUsed</code></td><td>Local storage</td><td>Easy Start AI</td><td>Counts how many of your 3 free Pip questions you've used today. It holds only today's date and a number, nothing about who you are, and never leaves your device.</td><td>Stays until you clear your browser data. The count resets each day.</td></tr>
-    <tr><td><code>CF_Authorization</code></td><td>Cookie</td><td>Cloudflare, for us</td><td>Keeps you signed in to the members area after you enter your one-time code. Only set if you sign in.</td><td><span class="ph">[SESSION LENGTH, for example 24 hours]</span></td></tr>
-    <tr><td><code>CF_Authorization</code> and similar, on our sign-in page</td><td>Cookie</td><td>Cloudflare Access</td><td>Used on the Cloudflare page that sends and checks your one-time code, to keep the sign-in secure.</td><td>Up to the same session length</td></tr>
+    <tr><td><code>CF_Authorization</code></td><td>Cookie</td><td>Cloudflare, for us</td><td>Keeps you signed in to the members area after you enter your one-time code. Only set if you sign in.</td><td>30 days, then you sign in again with a new code</td></tr>
+    <tr><td><code>CF_Authorization</code> and similar, on our sign-in page</td><td>Cookie</td><td>Cloudflare Access</td><td>Used on the Cloudflare page that sends and checks your one-time code, to keep the sign-in secure.</td><td>Up to 30 days</td></tr>
     <tr><td><code>__cf_bm</code> or <code>cf_clearance</code></td><td>Cookie</td><td>Cloudflare</td><td>Security cookies Cloudflare may set to tell people from harmful bots. They aren't used to track you.</td><td>Up to 30 minutes (<code>__cf_bm</code>) or as set by Cloudflare</td></tr>
   </tbody>
 </table></div>
