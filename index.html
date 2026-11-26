@@ -86,6 +86,9 @@ main section{padding-block:56px}
 .bubble.you{background:var(--sky-soft);align-self:flex-end;border-bottom-right-radius:6px}
 .bubble.ai{background:var(--accent-soft);align-self:flex-start;border-bottom-left-radius:6px;white-space:pre-line}
 .bubble.typing{opacity:.7;font-style:italic}
+.pip-quote{gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.pip-quote label{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.pip-quote input,.pip-quote textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg,#fff);color:var(--ink)}
 .small{font-size:.85rem;color:var(--muted)}
 
 /* doors */
@@ -707,8 +710,14 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   const log=document.getElementById('log'),leftEl=document.getElementById('left'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput'),chips=document.getElementById('chips');
   const panel=document.getElementById('pipPanel'),launcher=document.getElementById('pipLauncher');
   const section=()=>document.body.dataset.section||'other';
-  const showLeft=()=>{const l=MAX-used;leftEl.textContent=l>0?l+' free question'+(l===1?'':'s')+' left today':'No free questions left today';};
-  function renderChips(){const list=prompts[section()]||prompts.other;chips.innerHTML='';list.forEach(t=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=t;c.addEventListener('click',()=>ask(t));chips.appendChild(c);});}
+  let intakeMode=false,intakeHist=[];
+  const showLeft=()=>{if(intakeMode){leftEl.textContent="Quote helper: doesn't use your free questions";return;}const l=MAX-used;leftEl.textContent=l>0?l+' free question'+(l===1?'':'s')+' left today':'No free questions left today';};
+  function renderChips(){
+    chips.innerHTML='';
+    if(intakeMode){const c=document.createElement('button');c.type='button';c.className='chip';c.textContent='Cancel the quote and ask a question instead';c.addEventListener('click',endIntake);chips.appendChild(c);return;}
+    const list=prompts[section()]||prompts.other;list.forEach(t=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=t;c.addEventListener('click',()=>ask(t));chips.appendChild(c);});
+    chips.appendChild(quoteBtn('chip','Get a quote for a one-off job'));
+  }
   function add(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;log.appendChild(b);log.scrollTop=log.scrollHeight;}
   function handoff(){
     const d=document.createElement('div');d.className='handoff';
@@ -733,14 +742,17 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     guide_family:['See the Family set-up guide (£7)','#guides'],guide_bundle:['See the guide bundle (£15)','#guides'],
     starter:['See Starter support (£15/month)','#personal-plans'],plus:['See Plus support (£35/month)','#personal-plans'],
     session:['Book a £45 session','#personal-plans'],discovery:['Book a free call','#contact','Discovery call'],
-    quote:['Get a quote','#biz-packages'],message_mike:['Message Mike','#contact']
+    quote:['Get a quote','#biz-packages'],message_mike:['Message Mike','#contact'],
+    tailored_quote:['Get a tailored quote',null]
   };
   function nextStep(id){
     const n=NEXT[id];if(!n)return handoff();
     const d=document.createElement('div');d.className='handoff';
+    if(!n[1]){d.appendChild(quoteBtn('btn primary',n[0]));log.appendChild(d);log.scrollTop=log.scrollHeight;return;}
     const a=document.createElement('a');a.className='btn primary'+(n[2]?' pkg':'');a.href=n[1];a.textContent=n[0];if(n[2])a.dataset.package=n[2];
     d.appendChild(a);
-    if(id!=='message_mike'&&id!=='discovery'){const m=document.createElement('a');m.className='btn ghost';m.href='#contact';m.textContent='Message Mike';d.appendChild(m);}
+    if(['session','quote','discovery'].includes(id))d.appendChild(quoteBtn('btn ghost','Get a tailored quote'));
+    else if(id!=='message_mike'){const m=document.createElement('a');m.className='btn ghost';m.href='#contact';m.textContent='Message Mike';d.appendChild(m);}
     log.appendChild(d);log.scrollTop=log.scrollHeight;
   }
   const limitMsg=()=>section()==='business'?"That's all my free questions for today. A free discovery call with Mike is the best next step.":"That's all my free questions for today. For more help, Mike can take it from here, or a support plan gets you a real person with a set reply time.";
@@ -750,10 +762,65 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     add(hit?hit[1]:(section()==='business'?"Good question! That one is best answered on a free discovery call, where Mike can look at how your business works.":"Good question! That one needs a human touch. Mike can help you properly, either with a quick message or through a support plan."),'ai');
     if(!hit||used>=MAX)handoff();
   }
+  // Quote helper: Pip asks about a one-off job, then the visitor sends Mike a summary (by Web3Forms, like the contact form).
+  function quoteBtn(cls,label){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.addEventListener('click',startIntake);return b;}
+  function startIntake(){
+    if(intakeMode||busy)return;
+    intakeMode=true;intakeHist=[];
+    const opener="Lovely, let's get Mike what he needs for a tailored quote. I'll ask a few quick questions, and they won't use up your free ones. First, what would you like AI to help you with?";
+    add(opener,'ai');intakeHist.push({role:'assistant',content:opener});
+    renderChips();showLeft();input.focus();
+  }
+  function endIntake(){intakeMode=false;intakeHist=[];renderChips();showLeft();add("No problem. Ask me anything about AI.",'ai');}
+  function quoteForm(summary){
+    const f=document.createElement('form');f.className='pip-quote stack';
+    f.innerHTML='<label>Summary for Mike (you can edit it)<textarea name="summary" rows="7" required></textarea></label>'+
+      '<label>Your name<input name="name" required autocomplete="name"></label>'+
+      '<label>Your email<input name="email" type="email" required autocomplete="email"></label>'+
+      '<input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off">'+
+      '<button class="btn primary" type="submit">Send to Mike</button><p class="small notice" hidden></p>';
+    f.summary.value=summary;
+    f.addEventListener('submit',async e=>{
+      e.preventDefault();if(f.botcheck.checked)return;
+      const btn=f.querySelector('button'),n=f.querySelector('.notice');btn.disabled=true;btn.textContent='Sending…';
+      const goal=((f.summary.value.match(/Goal:\s*(.*)/i)||[])[1]||'one-off job').slice(0,60);
+      try{
+        const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+          body:JSON.stringify({access_key:FORM_KEY,subject:'[Pip] Quote request: '+goal+' from '+f.name.value,from_name:'Easy Start AI website (Pip)',replyto:f.email.value,
+            name:f.name.value,email:f.email.value,topic:'Pip quote request',page:section(),message:f.summary.value})});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok||j.success===false)throw new Error();
+        f.remove();add("Sent! Thanks. Mike will look at it and reply by email with a tailored quote.",'ai');
+        intakeMode=false;intakeHist=[];renderChips();showLeft();
+      }catch(err){n.textContent="Sorry, that didn't send. Please try again, or email hello@easystartai.co.uk.";n.hidden=false;btn.disabled=false;btn.textContent='Send to Mike';}
+    });
+    log.appendChild(f);log.scrollTop=log.scrollHeight;
+  }
+  async function intakeAsk(q){
+    busy=true;
+    const typing=document.createElement('div');typing.className='bubble ai typing';typing.textContent='Pip is thinking…';log.appendChild(typing);log.scrollTop=log.scrollHeight;
+    let data=null;
+    try{
+      const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),25000);
+      const r=await fetch('/api/pip-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mode:'intake',s:section(),q,history:intakeHist.slice(-20)}),signal:ctrl.signal});
+      clearTimeout(t);if(r.ok)data=await r.json();
+    }catch(e){}
+    typing.remove();busy=false;
+    if(data&&data.reply){
+      add(data.reply,'ai');intakeHist.push({role:'user',content:q},{role:'assistant',content:data.reply});
+      if(data.summary)quoteForm(data.summary);
+    }else{
+      // AI not available: send them to the contact form instead.
+      intakeMode=false;renderChips();showLeft();
+      add("Mike can definitely quote for that. Tell him a bit about the job using the contact form, and he'll reply with a tailored price.",'ai');
+      const d=document.createElement('div');d.className='handoff';d.innerHTML='<a class="btn primary" href="#contact">Message Mike</a>';log.appendChild(d);log.scrollTop=log.scrollHeight;
+    }
+  }
   let busy=false;
   async function ask(q){
     q=q.trim();if(!q||busy)return;
     add(q,'you');
+    if(intakeMode)return intakeAsk(q);
     if(used>=MAX){logQ(q,false,true);setTimeout(()=>{add(limitMsg(),'ai');handoff();},300);return;}
     used++;save();showLeft();
     busy=true;

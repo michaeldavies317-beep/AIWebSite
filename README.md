@@ -34,6 +34,7 @@ The password lock is switched off for now. Search engines are still asked not to
 `functions/api/pip-chat.js` sends each Pip question to Claude Haiku (Anthropic) with Easy Start AI's rules: short, confidence-building answers, never the full solution, then one suggested next step (a guide, plan, session, call or quote), shown as a button. The product list is `NEXT_STEPS` in that file and `NEXT` in index.html; keep both in step with real prices.
 - Needs the `ANTHROPIC_API_KEY` secret (Preview for dev, Production for live). Without it, or if Anthropic fails or credit runs out, Pip uses the pre-written answers.
 - 3 free questions per person per day, checked on the server (scrambled IP + date, deleted after 2 days), and at most `PIP_DAILY_CAP` AI answers a day site-wide (default 200).
+- Quote helper: the "Get a quote for a one-off job" chip (or a tailored_quote suggestion) switches Pip to asking about the job one question at a time (own limit of 15 messages a day, not the 3 free ones, not logged). It ends with a summary form that sends "[Pip] Quote request: ..." to hello@ via Web3Forms. Without the AI key it points to the contact form.
 - Setup steps for Mike: `/mnt/project-files/website/pip-ai-setup.md` in the project.
 
 ## Admin site (only Mike)
