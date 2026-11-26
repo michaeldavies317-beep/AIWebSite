@@ -46,13 +46,13 @@
   items.forEach(it=>{
     const ok=it.who.some(w=>mine.has(w));
     const need=ORDER.find(r=>it.who.includes(r))||'plus';
-    const el=document.createElement(ok?'a':'div');el.className='card'+(ok?'':' locked');if(ok)el.href=it.url;
+    const buy=!ok&&it.price;const el=document.createElement(ok||buy?'a':'div');el.className='card'+(ok?'':' locked');if(ok)el.href=it.url;else if(buy)el.href=need==='parents'?'/#parents':'/#personal-plans';
     const meta=document.createElement('div');meta.className='meta';
     const pill=document.createElement('span');pill.className='pill r-'+need;pill.textContent=LABEL[need];
     const k=document.createElement('span');k.textContent=it.kind;meta.append(pill,k);
     const h=document.createElement('h3');h.textContent=it.title;
     const p=document.createElement('p');p.className='small';p.textContent=it.blurb||'';
-    const act=document.createElement('span');act.className='act';act.textContent=ok?'Open →':'Included with '+LABEL[need];
+    const act=document.createElement('span');act.className='act';act.textContent=ok?'Open →':(buy?'Buy it now, '+it.price+(need==='parents'?', or all three for £15 →':', or get it with Plus →'):'Included with '+LABEL[need]);
     el.append(meta,h,p,act);cards.appendChild(el);
   });
   if(known&&!pl){const u=document.getElementById('upsell');u.hidden=false;u.innerHTML='Want everything? <strong>Plus</strong> opens every tip, template and guide, with replies within one working day. <a href="/#personal-plans">See plans</a>';}

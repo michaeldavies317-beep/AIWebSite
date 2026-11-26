@@ -1,11 +1,292 @@
 {
-  "_help": "Mike's file list. Each entry is one tip or template. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Parent guides each get their own subfolder: parents/under-10/, parents/10-to-13/, parents/family-setup/, and parents/bundle/ for the bundle bonus printables (so each can get its own lock later). Free items link to the public site.",
+  "_help": "Mike's file list. Each entry is one tip, template or guide. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Guides people can buy on their own live in their own subfolder (plus/cv-kit/, parents/under-10/ and so on) and have a 'price'. Bundle bonus printables live in parents/bundle/. Free items link to the public site.",
   "items": [
-    {"title": "Write a better prompt in 3 steps", "kind": "Tip", "added": "2026-11-26", "who": ["free", "starter", "plus"], "url": "/#tips", "blurb": "The free tips on our main site, in one place."},
-    {"title": "ChatGPT, Claude or Gemini? A plain-English cheat sheet", "kind": "Cheat sheet", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/which-chatbot.html", "blurb": "What each popular chatbot is good at, and how to pick one."},
-    {"title": "Inbox clear-out: 5 email templates", "kind": "Template", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/email-templates.html", "blurb": "Copy-and-paste prompts for the emails everyone puts off."},
-    {"title": "A week of meals in 10 minutes", "kind": "Template", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/meal-planner.html", "blurb": "A step-by-step prompt that plans meals and a shopping list."},
-    {"title": "Your first AI assistant for work", "kind": "Guide", "added": "2026-11-26", "who": ["plus"], "url": "/members/plus/work-assistant.html", "blurb": "Set up a helper that knows your job, in one sitting."},
-    {"title": "Family AI rules poster", "kind": "Printable", "added": "2026-11-26", "who": ["parents", "plus"], "url": "/members/parents/bundle/family-rules.html", "blurb": "Five simple rules to agree together and stick on the fridge."}
+    {
+      "title": "Write a better prompt in 3 steps",
+      "kind": "Tip",
+      "added": "2026-11-26",
+      "who": [
+        "free",
+        "starter",
+        "plus"
+      ],
+      "url": "/#tips",
+      "blurb": "The free tips on our main site, in one place."
+    },
+    {
+      "title": "Start here: your first week with AI",
+      "kind": "Course",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/first-week.html",
+      "blurb": "Five days, ten minutes a day, one small win each day."
+    },
+    {
+      "title": "The prompt recipe card",
+      "kind": "Printable",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/prompt-recipe.html",
+      "blurb": "Who, What, How: the one-page recipe for better answers."
+    },
+    {
+      "title": "ChatGPT, Claude or Gemini? A plain-English cheat sheet",
+      "kind": "Cheat sheet",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/which-chatbot.html",
+      "blurb": "What each popular chatbot is good at, and how to pick one."
+    },
+    {
+      "title": "Privacy settings in 5 minutes",
+      "kind": "Cheat sheet",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/privacy-settings.html",
+      "blurb": "Where the important switches are in each app."
+    },
+    {
+      "title": "Inbox clear-out: 5 email templates",
+      "kind": "Template",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/email-templates.html",
+      "blurb": "Copy-and-paste prompts for the emails everyone puts off."
+    },
+    {
+      "title": "Life admin letters",
+      "kind": "Template",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/life-admin-letters.html",
+      "blurb": "Refunds, complaints, council, landlord and cancellations."
+    },
+    {
+      "title": "Make sense of any letter or form",
+      "kind": "Template",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/explain-letters.html",
+      "blurb": "Bills, payslips and jargon, in plain English."
+    },
+    {
+      "title": "A week of meals in 10 minutes",
+      "kind": "Template",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/meal-planner.html",
+      "blurb": "A step-by-step prompt that plans meals and a shopping list."
+    },
+    {
+      "title": "Plan a trip or day out",
+      "kind": "Template",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/trip-planner.html",
+      "blurb": "Ideas, a plan, a budget and a packing list in one chat."
+    },
+    {
+      "title": "Learn anything with AI as your tutor",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/ai-tutor.html",
+      "blurb": "A patient teacher for languages, hobbies and new skills."
+    },
+    {
+      "title": "Spot an AI scam",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "starter",
+        "plus"
+      ],
+      "url": "/members/starter/spot-a-scam.html",
+      "blurb": "Calm, simple habits that stop scammers, AI or not."
+    },
+    {
+      "title": "What's new in AI: December 2026",
+      "kind": "Monthly note",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/whats-new/2026-12.html",
+      "blurb": "What changed, what to try, and what to ignore."
+    },
+    {
+      "title": "Before your set-up call",
+      "kind": "Worksheet",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/before-your-call/",
+      "blurb": "Ten minutes of prep so your 30-minute call counts."
+    },
+    {
+      "title": "Your first AI assistant for work",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/work-assistant.html",
+      "blurb": "Set up a helper that knows your job, in one sitting."
+    },
+    {
+      "title": "Teach AI to write like you",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/write-like-you/",
+      "blurb": "A saved voice guide so drafts sound like you.",
+      "price": "£9"
+    },
+    {
+      "title": "CV and job application kit",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/cv-kit/",
+      "blurb": "CV refresh, cover letters and interview practice.",
+      "price": "£9"
+    },
+    {
+      "title": "Money and budgeting with AI",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/budgeting/",
+      "blurb": "A simple budget from a month of spending, safely.",
+      "price": "£9"
+    },
+    {
+      "title": "Start a side hustle with AI",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/side-hustle/",
+      "blurb": "From idea to your first listing and a week of posts.",
+      "price": "£9"
+    },
+    {
+      "title": "Notes to actions",
+      "kind": "Guide",
+      "added": "2026-11-26",
+      "who": [
+        "plus"
+      ],
+      "url": "/members/plus/notes-to-actions/",
+      "blurb": "Turn voice notes and meetings into a tidy to-do list.",
+      "price": "£9"
+    },
+    {
+      "title": "First steps with AI (under 10s)",
+      "kind": "Parent guide",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/under-10/",
+      "blurb": "Safe settings, kid-friendly apps and fun things to make together.",
+      "price": "£7"
+    },
+    {
+      "title": "AI, homework and chatbots (10 to 13s)",
+      "kind": "Parent guide",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/10-to-13/",
+      "blurb": "School rules, honest homework help, age limits and AI friends.",
+      "price": "£7"
+    },
+    {
+      "title": "Family set-up guide",
+      "kind": "Parent guide",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/family-setup/",
+      "blurb": "Phone, tablet, laptop and console controls, one screen at a time.",
+      "price": "£7"
+    },
+    {
+      "title": "Family AI rules poster",
+      "kind": "Printable",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/bundle/family-rules.html",
+      "blurb": "Five simple rules to agree together and stick on the fridge."
+    },
+    {
+      "title": "AI conversation cards",
+      "kind": "Printable",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/bundle/conversation-cards.html",
+      "blurb": "Sixteen questions to get the family talking, by age."
+    },
+    {
+      "title": "Is this app OK? checklist",
+      "kind": "Printable",
+      "added": "2026-11-26",
+      "who": [
+        "parents",
+        "plus"
+      ],
+      "url": "/members/parents/bundle/is-this-app-ok.html",
+      "blurb": "Ten questions to decide on a new app in five minutes."
+    }
   ]
 }
