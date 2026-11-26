@@ -1,11 +1,11 @@
 {
-  "_help": "Mike's file list. Each entry is one tip or template. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Free items link to the public site.",
+  "_help": "Mike's file list. Each entry is one tip or template. 'who' lists the plans that can open it: free, starter, plus, parents. Plus members can open everything. The file must live in the folder that matches its lowest paid plan: starter/, plus/ or parents/. Parent guides each get their own subfolder: parents/under-10/, parents/10-to-13/, parents/family-setup/, and parents/bundle/ for the bundle bonus printables (so each can get its own lock later). Free items link to the public site.",
   "items": [
     {"title": "Write a better prompt in 3 steps", "kind": "Tip", "added": "2026-11-26", "who": ["free", "starter", "plus"], "url": "/#tips", "blurb": "The free tips on our main site, in one place."},
     {"title": "ChatGPT, Claude or Gemini? A plain-English cheat sheet", "kind": "Cheat sheet", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/which-chatbot.html", "blurb": "What each popular chatbot is good at, and how to pick one."},
     {"title": "Inbox clear-out: 5 email templates", "kind": "Template", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/email-templates.html", "blurb": "Copy-and-paste prompts for the emails everyone puts off."},
     {"title": "A week of meals in 10 minutes", "kind": "Template", "added": "2026-11-26", "who": ["starter", "plus"], "url": "/members/starter/meal-planner.html", "blurb": "A step-by-step prompt that plans meals and a shopping list."},
     {"title": "Your first AI assistant for work", "kind": "Guide", "added": "2026-11-26", "who": ["plus"], "url": "/members/plus/work-assistant.html", "blurb": "Set up a helper that knows your job, in one sitting."},
-    {"title": "Family AI rules poster", "kind": "Printable", "added": "2026-11-26", "who": ["parents", "plus"], "url": "/members/parents/family-rules.html", "blurb": "Five simple rules to agree together and stick on the fridge."}
+    {"title": "Family AI rules poster", "kind": "Printable", "added": "2026-11-26", "who": ["parents", "plus"], "url": "/members/parents/bundle/family-rules.html", "blurb": "Five simple rules to agree together and stick on the fridge."}
   ]
 }
