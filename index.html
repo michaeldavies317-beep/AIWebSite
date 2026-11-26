@@ -595,7 +595,7 @@ details.faq p{margin-top:8px;color:var(--muted)}
   menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o);});
 
   // Forms: sent by Web3Forms to hello@easystartai.co.uk (forwards to Gmail). The key is public by design.
-  const FORM_KEY='WEB3FORMS_KEY_HERE';
+  const FORM_KEY='16e0b2b1-8566-4309-b8ba-84691cb42e5a';
   document.querySelectorAll('.send-form').forEach(f=>f.addEventListener('submit',async e=>{
     e.preventDefault();
     const n=f.querySelector('.notice'),btn=f.querySelector('button[type=submit]'),label=btn.textContent;
