@@ -242,8 +242,9 @@
     const c=document.createElement('td');c.style.whiteSpace='nowrap';
     const pv=document.createElement('a');pv.className='btn ghost';pv.href='/admin/email?preview='+encodeURIComponent(p.key);pv.target='_blank';pv.rel='noopener';pv.textContent='Preview';c.appendChild(pv);
     const tbn=document.createElement('button');tbn.className='btn ghost';tbn.type='button';tbn.textContent='Send me a test';tbn.style.marginLeft='8px';
-    tbn.addEventListener('click',async()=>{tbn.disabled=true;const r=await post({action:'test',key:p.key});$('emTestMsg').hidden=false;$('emTestMsg').textContent=r.message||r.error;tbn.disabled=false;});
-    c.appendChild(tbn);tr.appendChild(c);wt.appendChild(tr);});
+    const note=document.createElement('div');note.className='small';note.style.whiteSpace='normal';note.style.marginTop='6px';
+    tbn.addEventListener('click',async()=>{tbn.disabled=true;tbn.textContent='Sending…';note.textContent='';const r=await post({action:'test',key:p.key});note.textContent=r.message||r.error||'No answer from the site.';note.style.color=r.error?'#b42318':'';$('emTestMsg').hidden=false;$('emTestMsg').textContent=p.title+': '+(r.message||r.error);tbn.textContent='Send me a test';tbn.disabled=false;});
+    c.appendChild(tbn);c.appendChild(note);tr.appendChild(c);wt.appendChild(tr);});
   // "New this month" writer
   const aud=$('nwAud');d.audiences.forEach(a=>{const o=document.createElement('option');o.value=a.key;o.textContent=a.label+' · '+COLOURS[a.theme];aud.appendChild(o);});
   let lib=[];try{lib=(await (await fetch('/members/library.json',{cache:'no-store'})).json()).items||[];}catch(e){}
