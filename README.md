@@ -28,6 +28,14 @@ The password lock is switched off for now. Search engines are still asked not to
   3. Test in a private window: https://admin.easystartai.co.uk asks for your email code, then shows Mike's admin. https://easystartai.co.uk/admin/ should jump to the admin address.
   4. Keep the dev one (admin-dev) for testing. Delete the old "Mike's file list" app on members/admin if it's still there.
 
+- Pip's AI: add the `ANTHROPIC_API_KEY` secret under **Production** too (Workers & Pages > aiwebsite > Settings > Variables and secrets), redeploy, then press "Check Pip's AI" on admin.easystartai.co.uk.
+
+## Pip's AI answers
+`functions/api/pip-chat.js` sends each Pip question to Claude Haiku (Anthropic) with Easy Start AI's rules: short, confidence-building answers, never the full solution, then one suggested next step (a guide, plan, session, call or quote), shown as a button. The product list is `NEXT_STEPS` in that file and `NEXT` in index.html; keep both in step with real prices.
+- Needs the `ANTHROPIC_API_KEY` secret (Preview for dev, Production for live). Without it, or if Anthropic fails or credit runs out, Pip uses the pre-written answers.
+- 3 free questions per person per day, checked on the server (scrambled IP + date, deleted after 2 days), and at most `PIP_DAILY_CAP` AI answers a day site-wide (default 200).
+- Setup steps for Mike: `/mnt/project-files/website/pip-ai-setup.md` in the project.
+
 ## Admin site (only Mike)
 Mike's tools (file list and Pip question log) live in `admin/` and `functions/admin/`. They only open on their own address, and one Cloudflare Access app locks that whole address:
 - dev: https://admin-dev.easystartai.co.uk (points at the dev branch)
