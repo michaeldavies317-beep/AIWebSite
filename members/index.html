@@ -29,13 +29,17 @@
 (async()=>{
   const LABEL={free:'Free',starter:'Starter',plus:'Plus',parents:'Parent guide'};
   const ORDER=['free','starter','parents','plus'];
-  // Which folders can this visitor open? Cloudflare Access blocks the ones their plan doesn't include.
-  async function can(r){try{const x=await fetch('/members/'+r+'/ok.json',{credentials:'same-origin',redirect:'manual',cache:'no-store'});if(!x.ok)return false;const j=await x.json();return j.ok===true;}catch(e){return false;}}
-  const [st,pl,pa]=await Promise.all([can('starter'),can('plus'),can('parents')]);
+  // Which plans does this member have? Ask the site (it checks Mike's Cloudflare email lists).
+  let me=null;try{const r=await fetch('/members/me',{credentials:'same-origin',redirect:'manual',cache:'no-store'});if(r.ok)me=await r.json();}catch(e){}
+  const known=!!(me&&me.configured);
+  const has=new Set(known?me.plans:[]);
+  const st=has.has('starter'),pl=has.has('plus'),pa=has.has('parents');
   const mine=new Set(['free']);if(st)mine.add('starter');if(pl){mine.add('plus');mine.add('starter');mine.add('parents');}if(pa)mine.add('parents');
   const top=pl?'plus':(st&&pa?'starter and parents':(st?'starter':(pa?'parents':'free')));
   const names={plus:'Plus','starter and parents':'Starter and Parent guide',starter:'Starter',parents:'Parent guide',free:'Free'};
-  document.getElementById('plan').textContent='Your plan: '+names[top]+'. Everything you can open is shown first.';
+  const who=me&&me.email?' ('+me.email+')':'';
+  document.getElementById('plan').textContent=known?'Your plan: '+names[top]+who+'. Everything you can open is shown first.':'Signed in'+who+'. Open anything below; if it isn\'t in your plan, you\'ll see a "no access" page.';
+  if(!known){ORDER.forEach(r=>mine.add(r));}
   let data;try{data=await (await fetch('/members/library.json',{cache:'no-store'})).json();}catch(e){document.getElementById('cards').textContent='Sorry, the library didn\'t load. Please refresh the page.';return;}
   const items=data.items.slice().sort((a,b)=>(b.who.some(w=>mine.has(w))-a.who.some(w=>mine.has(w)))||b.added.localeCompare(a.added));
   const cards=document.getElementById('cards');
@@ -51,7 +55,7 @@
     const act=document.createElement('span');act.className='act';act.textContent=ok?'Open →':'Included with '+LABEL[need];
     el.append(meta,h,p,act);cards.appendChild(el);
   });
-  if(!pl){const u=document.getElementById('upsell');u.hidden=false;u.innerHTML='Want everything? <strong>Plus</strong> opens every tip, template and guide, with replies within one working day. <a href="/#personal-plans">See plans</a>';}
+  if(known&&!pl){const u=document.getElementById('upsell');u.hidden=false;u.innerHTML='Want everything? <strong>Plus</strong> opens every tip, template and guide, with replies within one working day. <a href="/#personal-plans">See plans</a>';}
 })();
 </script>
 </body>
