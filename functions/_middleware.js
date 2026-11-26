@@ -26,22 +26,25 @@ function same(a, b) {
 }
 
 export async function onRequest({ request, env, next }) {
-  const user = env.SITE_USER;
-  const pass = env.SITE_PASSWORD;
+  // Trim stray spaces, which easily sneak in when pasting into Cloudflare.
+  const user = (env.SITE_USER || '').trim();
+  const pass = (env.SITE_PASSWORD || '').trim();
   // If the password hasn't been set up yet, keep the site locked rather than open.
-  if (!user || !pass) return ask('This site is private and its password is not set up yet.');
+  if (!user && !pass) return ask('Locked: neither SITE_USER nor SITE_PASSWORD is set up in Cloudflare yet.');
+  if (!user) return ask('Locked: SITE_USER is not set up in Cloudflare yet.');
+  if (!pass) return ask('Locked: SITE_PASSWORD is not set up in Cloudflare yet.');
 
   const header = request.headers.get('Authorization') || '';
   if (header.startsWith('Basic ')) {
     let decoded = '';
     try { decoded = new TextDecoder().decode(Uint8Array.from(atob(header.slice(6)), c => c.charCodeAt(0))); } catch {}
     const i = decoded.indexOf(':');
-    if (i > -1 && same(decoded.slice(0, i), user) && same(decoded.slice(i + 1), pass)) {
+    if (i > -1 && same(decoded.slice(0, i).trim().toLowerCase(), user.toLowerCase()) && same(decoded.slice(i + 1).trim(), pass)) {
       const res = await next();
       const out = new Response(res.body, res);
       out.headers.set('X-Robots-Tag', 'noindex, nofollow');
       return out;
     }
   }
-  return ask('Please sign in to view this site.');
+  return ask(header ? 'That username or password did not match. Please try again.' : 'Please sign in to view this site.');
 }
