@@ -39,12 +39,14 @@
     <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
     <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
     <button class="btn ghost" id="pipTest" type="button">Send a test question</button>
+    <button class="btn ghost" id="pipAiTest" type="button">Check Pip's AI</button>
   </div>
+  <div id="pipAiStatus" class="note" aria-live="polite" hidden></div>
   <div id="pipStatus" class="note" aria-live="polite">Loading…</div>
   <div id="pipBody" hidden class="stack" style="gap:16px">
-    <div class="tablebox"><table><thead><tr><th>Section</th><th>Questions</th><th>Pip had no answer</th><th>Asked after free limit</th></tr></thead><tbody id="pipCounts"></tbody></table></div>
-    <div><h3>Words that come up most (in questions Pip couldn't answer)</h3><p id="pipWords" class="small"></p></div>
-    <div><h3>Questions Pip couldn't answer</h3><div class="tablebox"><table><thead><tr><th>Date</th><th>Section</th><th>Question</th></tr></thead><tbody id="pipGaps"></tbody></table></div></div>
+    <div class="tablebox"><table><thead><tr><th>Section</th><th>Questions</th><th>Not covered by a guide yet</th><th>Asked after free limit</th></tr></thead><tbody id="pipCounts"></tbody></table></div>
+    <div><h3>Words that come up most (in questions not covered yet)</h3><p id="pipWords" class="small"></p></div>
+    <div><h3>Questions not covered by a guide yet (ideas for new guides)</h3><div class="tablebox"><table><thead><tr><th>Date</th><th>Section</th><th>Question</th></tr></thead><tbody id="pipGaps"></tbody></table></div></div>
     <p class="small">Tip: download the spreadsheet and send it to Claude, who will group the questions into themes and suggest guides. Rows older than 12 months are deleted automatically.</p>
   </div>
 </section>
@@ -105,6 +107,17 @@
       if(res==='saved'){m.value=new Date().toISOString().slice(0,7);await load();if(st.textContent.startsWith('No questions'))st.textContent='Test result: saved, but the list is still empty. Please tell Claude.';}
       else st.textContent='Test result: '+res+'. Please send this message to Claude.';
     }catch(e){st.textContent='Test result: could not reach the log ('+e.message+'). Please send this message to Claude.';}
+  });
+  // Asks Pip's AI one question from this page. It doesn't use up the daily limit here.
+  const why={'no-key':'the Anthropic key isn\'t set up yet (ANTHROPIC_API_KEY under Preview)','no-database':'the PIP_DB database isn\'t connected','bad-key':'Anthropic didn\'t accept the key. Make a new key and paste it in again','out-of-credit':'the Anthropic account is out of credit','busy':'Anthropic is busy or the spending limit was reached. Try again in a minute','no-permission':'the key doesn\'t have permission','no-connection':'Cloudflare couldn\'t reach Anthropic','site-cap':'the site-wide daily limit has been reached'};
+  document.getElementById('pipAiTest').addEventListener('click',async()=>{
+    const out=document.getElementById('pipAiStatus');out.hidden=false;out.textContent='Asking Pip…';
+    try{const r=await fetch('/api/pip-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({s:'test',q:'Which AI tool should I start with?'})});
+      const d=await r.json();
+      if(d.reply)out.textContent='Pip\'s AI is working. It answered: "'+d.reply+'"'+(d.next?' (suggested next step: '+d.next+')':'');
+      else if(d.fallback)out.textContent='Pip\'s AI is off, so visitors get the pre-written answers. Reason: '+(why[d.why]||d.why)+'.';
+      else out.textContent='Unexpected answer: '+JSON.stringify(d)+'. Please send this to Claude.';
+    }catch(e){out.textContent='Could not reach Pip ('+e.message+'). Please send this to Claude.';}
   });
   m.addEventListener('change',load);load();
 })();
