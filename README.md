@@ -13,6 +13,7 @@ The password lock is switched off for now. Search engines are still asked not to
 - Recreate the Stripe Workflow "Email Mike when a plan ends" in live mode (sandbox workflows don't carry over).
 - Automatic list changes (setup guide Part 10): add STRIPE_WEBHOOK_SECRET (live webhook to https://easystartai.co.uk/api/stripe-webhook, events checkout.session.completed, checkout.session.async_payment_succeeded, customer.subscription.deleted) and CF_LIST_TOKEN (Zero Trust: Edit) under Production. Test with one live purchase and check the admin "Automatic list changes" log.
 - Purchase alerts (setup guide Part 9): recreate the "New purchase: add to list" workflow in live mode, give every live Payment Link the metadata `add_to_list` (the list name), and add a live restricted key (Checkout Sessions, Products, Prices: Read) as `STRIPE_READ_KEY` under Production for the admin "Recent purchases" panel.
+- Emails (setup guide Part 11): add `BREVO_API_KEY` under **Production**, and swap the test portal link in `functions/_email/templates.js` (PORTAL_LINK) for the live one.
 - Swap the eight TEST "buy" links in members/library.json (5 Plus guides at £9, 3 parent guides) for live-mode links.
 - Set up Cloudflare Access for easystartai.co.uk/members paths (same apps as on dev).
 - Check CF_API_TOKEN (secret) and CF_ACCOUNT_ID (text) exist for the **Production** environment too (Pages Settings, environment dropdown). dev uses the Preview copies; the live site needs Production ones or the library can't show plans. Test at easystartai.co.uk/members/me (should say "configured":true).
@@ -55,3 +56,9 @@ One-off setup in Cloudflare (about 5 minutes, no secrets):
 2. Workers & Pages > aiwebsite > Settings > Bindings > Add > D1 database. Variable name `PIP_DB`, database `pip-questions`. Do this for both Production and Preview.
 3. Deployments > latest dev deployment > Retry deployment.
 Until this is done, Pip works as normal and nothing is saved.
+
+## Emails (welcome + "New this month")
+`functions/api/stripe-webhook.js` calls `functions/_email/` after each purchase: a branded welcome email per product (once per order, via Brevo), and the buyer is added to the matching Brevo list (Starter members, Plus members, Single guide buyers, Parent guide buyers). When a plan ends they come off the Starter/Plus list. Templates and colours: `functions/_email/templates.js` (Personal teal, Parents amber with the sun band, Business blue). Pictures for emails (PNG, email apps can't show SVG) are in `email/`.
+- Needs the `BREVO_API_KEY` secret. Without it nothing changes and no email is sent.
+- Admin (`/admin/` > Emails): preview each welcome email, send yourself a test, create the Brevo lists, and write a "New this month" email that is saved as a Brevo campaign draft (sent from Brevo, with unsubscribe).
+- Adding a product: add it to `PRODUCTS` and `KEYS` in `templates.js` too.

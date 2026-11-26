@@ -12,6 +12,14 @@
 //   STRIPE_READ_KEY      (secret)  restricted Stripe key (also used by the admin page); needs
 //                                  Customers: Read and Products: Read for cancellations
 // Nobody's email is ever removed if it is also on the "Mike" list (so Mike's own tests can't lock him out).
+//
+// Emails (optional, setup guide Part 11): if BREVO_API_KEY (secret) is set, a buyer who gets access
+// is also sent a branded welcome email (once per order) and added to the matching Brevo mailing list
+// for "New this month" emails. When a plan ends they're taken off that mailing list too.
+// Email problems are logged but never stop the list change or make Stripe retry.
+
+import { welcomeEmail, productKeyFor, PRODUCTS } from '../_email/templates.js';
+import { brevo, senders } from '../_email/brevo.js';
 
 const enc = new TextEncoder();
 const ok = (msg) => new Response(msg || 'ok', { status: 200 });
@@ -83,7 +91,35 @@ async function stripeGet(env, path) {
   return d;
 }
 
-async function onPurchase(env, s) {
+async function welcomeAndSync(env, site, s, email) {
+  if (!env.BREVO_API_KEY) return;
+  const key = productKeyFor((s.metadata && s.metadata.add_to_list) || '');
+  if (!key || !PRODUCTS[key]) return log(env, 'welcome email', email, '', 'skipped: no welcome email for this product');
+  const name = (s.customer_details && s.customer_details.name) || '';
+  const first = String(name).trim().split(/\s+/)[0] || '';
+  const api = brevo(env);
+  const p = PRODUCTS[key];
+  try { await api.addToList(email, p.list, first); await log(env, 'mailing list', email, p.list, 'added'); }
+  catch (e) { await log(env, 'mailing list', email, p.list, 'NEEDS YOU: ' + String(e && e.message || e).slice(0, 160)); }
+  // Once per order, even if Stripe sends the event twice.
+  if (env.PIP_DB && s.id) {
+    try {
+      await env.PIP_DB.prepare('CREATE TABLE IF NOT EXISTS welcome_sent (session TEXT PRIMARY KEY, at TEXT NOT NULL)').run();
+      const r = await env.PIP_DB.prepare("INSERT OR IGNORE INTO welcome_sent (session, at) VALUES (?1, datetime('now'))").bind(s.id).run();
+      if (r.meta && r.meta.changes === 0) return log(env, 'welcome email', email, p.title, 'already sent for this order');
+    } catch (e) { /* carry on and send */ }
+  }
+  try {
+    const m = welcomeEmail(key, { site, name, email });
+    await api.send({ sender: senders(env).welcome, to: email, name, subject: m.subject, html: m.html, text: m.text, tags: ['welcome', key] });
+    await log(env, 'welcome email', email, p.title, 'sent');
+  } catch (e) {
+    if (env.PIP_DB && s.id) { try { await env.PIP_DB.prepare('DELETE FROM welcome_sent WHERE session = ?1').bind(s.id).run(); } catch (x) {} }
+    await log(env, 'welcome email', email, p.title, 'NEEDS YOU: not sent. ' + String(e && e.message || e).slice(0, 160));
+  }
+}
+
+async function onPurchase(env, s, site) {
   const email = String((s.customer_details && s.customer_details.email) || s.customer_email || '').trim().toLowerCase();
   const tag = (s.metadata && s.metadata.add_to_list) || '';
   if (s.payment_status !== 'paid') return log(env, 'purchase', email, tag, 'skipped: not paid yet');
@@ -94,9 +130,18 @@ async function onPurchase(env, s) {
   const api = cf(env);
   const list = await findList(api, pattern);
   if (!list) return log(env, 'purchase', email, tag, 'NEEDS YOU: no Zero Trust list matches "' + tag + '"');
-  if ((await api.items(list.id)).includes(email)) return log(env, 'purchase', email, list.name, 'already on the list');
-  await api.add(list.id, email);
-  return log(env, 'purchase', email, list.name, 'added');
+  if ((await api.items(list.id)).includes(email)) await log(env, 'purchase', email, list.name, 'already on the list');
+  else { await api.add(list.id, email); await log(env, 'purchase', email, list.name, 'added'); }
+  return welcomeAndSync(env, site, s, email);
+}
+
+async function unsubscribePlan(env, email, product) {
+  if (!env.BREVO_API_KEY) return;
+  const key = productKeyFor(product);
+  if (key !== 'starter' && key !== 'plus') return;
+  const listName = PRODUCTS[key].list;
+  try { await log(env, 'mailing list', email, listName, await brevo(env).removeFromList(email, listName)); }
+  catch (e) { await log(env, 'mailing list', email, listName, 'NEEDS YOU: remove by hand in Brevo. ' + String(e && e.message || e).slice(0, 140)); }
 }
 
 async function onCancelEnded(env, sub) {
@@ -120,9 +165,9 @@ async function onCancelEnded(env, sub) {
     return log(env, 'plan ended', email, product, 'kept: they still have another active plan like this');
   const list = await findList(api, pattern);
   if (!list) return log(env, 'plan ended', email, product, 'NEEDS YOU: no Zero Trust list matches');
-  if (!(await api.items(list.id)).includes(email)) return log(env, 'plan ended', email, list.name, 'was not on the list');
-  await api.remove(list.id, email);
-  return log(env, 'plan ended', email, list.name, 'removed');
+  if (!(await api.items(list.id)).includes(email)) await log(env, 'plan ended', email, list.name, 'was not on the list');
+  else { await api.remove(list.id, email); await log(env, 'plan ended', email, list.name, 'removed'); }
+  return unsubscribePlan(env, email, product);
 }
 
 export async function onRequestPost({ request, env }) {
@@ -132,7 +177,7 @@ export async function onRequestPost({ request, env }) {
   if (!event) return new Response('bad signature', { status: 400 });
   if (!env.CF_LIST_TOKEN || !env.CF_ACCOUNT_ID) { await log(env, event.type, '', '', 'NEEDS YOU: CF_LIST_TOKEN or CF_ACCOUNT_ID not set'); return ok('not configured'); }
   try {
-    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') await onPurchase(env, event.data.object);
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') await onPurchase(env, event.data.object, new URL(request.url).origin);
     else if (event.type === 'customer.subscription.deleted') await onCancelEnded(env, event.data.object);
     return ok();
   } catch (e) {

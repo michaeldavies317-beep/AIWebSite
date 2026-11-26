@@ -29,6 +29,32 @@
   <div class="tablebox" id="autoBox" hidden><table><thead><tr><th>When (UK)</th><th>What happened</th><th>Email</th><th>List</th><th>Result</th></tr></thead><tbody id="autoRows"></tbody></table></div>
 </section>
 
+<section class="stack" id="emails" style="gap:16px">
+  <h2>Emails</h2>
+  <p class="lead">Buyers get a welcome email automatically, in their area's colours, and are added to the matching mailing list in Brevo. Use this section to preview the emails, send yourself a test, and write your "New this month" emails.</p>
+  <div id="emSetup" class="note" aria-live="polite">Loading…</div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="emSetupBtn" type="button">Set up Brevo lists</button><span class="small" id="emSetupMsg" aria-live="polite"></span></div>
+  <div class="tablebox" id="emListsBox" hidden><table><thead><tr><th>Brevo mailing list</th><th>People</th></tr></thead><tbody id="emLists"></tbody></table></div>
+
+  <h3>Welcome emails</h3>
+  <p class="small">"Preview" opens the email in a new tab with a made-up buyer. "Send me a test" emails it to you.</p>
+  <div class="tablebox"><table><thead><tr><th>Bought</th><th>Colours</th><th></th></tr></thead><tbody id="emWelcome"></tbody></table></div>
+  <div id="emTestMsg" class="note" aria-live="polite" hidden></div>
+
+  <h3>Write a "New this month" email</h3>
+  <p class="small">Fill this in, press Preview to check it, then "Save as a draft in Brevo". Nothing is sent from here: you open the draft in Brevo, send yourself a test, then press Send or Schedule. Every email has an unsubscribe link built in.</p>
+  <div class="stack" style="gap:10px;max-width:640px">
+    <label>Who is it for?<br><select id="nwAud" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:var(--surface);color:var(--ink)"></select></label>
+    <label>Subject line<br><input id="nwSubject" type="text" maxlength="150" placeholder="New this month: two fresh guides for you" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:var(--surface);color:var(--ink)"></label>
+    <label>Heading<br><input id="nwHeading" type="text" maxlength="120" placeholder="New in your members library" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:var(--surface);color:var(--ink)"></label>
+    <label>A few friendly lines<br><textarea id="nwIntro" rows="4" maxlength="1200" placeholder="Happy December! Here's what we added this month..." style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:var(--surface);color:var(--ink)"></textarea></label>
+    <div><strong>What's new</strong> <span class="small">(newest first; ones added in the last month are ticked)</span><div id="nwItems" class="stack" style="gap:4px;margin-top:6px"></div></div>
+    <label id="nwPipWrap">Pip's tip (optional)<br><input id="nwPip" type="text" maxlength="200" placeholder="Tip: try the new guide on your next meeting." style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:var(--surface);color:var(--ink)"></label>
+    <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn ghost" id="nwPreview" type="button">Preview</button><button class="btn primary" id="nwDraft" type="button">Save as a draft in Brevo</button></div>
+    <div id="nwMsg" class="note" aria-live="polite" hidden></div>
+  </div>
+</section>
+
 <section class="stack" id="buys" style="gap:16px">
   <h2>Recent purchases</h2>
   <p class="lead">The last 30 paid orders from Stripe, newest first, and which list to add each buyer to in Zero Trust (Reusable components &gt; Lists).</p>
@@ -191,6 +217,51 @@
   }
   btn.addEventListener('click',async()=>{btn.disabled=true;await load();btn.disabled=false;});
   load();
+})();
+</script>
+<script>
+// Emails: welcome previews/tests and the "New this month" writer (see functions/admin/email.js).
+(async()=>{
+  const $=id=>document.getElementById(id);
+  const COLOURS={personal:'Personal (teal)',parents:'Parents (sunny amber)',business:'Business (blue)'};
+  const post=async(body)=>{try{const r=await fetch('/admin/email',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});return await r.json();}catch(e){return {error:'Could not reach the site. Try again.'};}};
+  let d;try{d=await (await fetch('/admin/email',{cache:'no-store'})).json();}catch(e){$('emSetup').textContent='Could not load the email settings. Try refreshing the page.';return;}
+  function showSetup(){
+    if(!d.setup.brevoKey){$('emSetup').textContent='Not switched on yet: add the BREVO_API_KEY secret in Cloudflare Pages (setup guide, Part 11). Previews below still work.';$('emSetupBtn').hidden=true;return;}
+    if(d.error){$('emSetup').textContent='Brevo problem: '+d.error+'. Please send this message to Claude.';return;}
+    $('emSetup').textContent=d.missing&&d.missing.length?'Brevo is connected. Some mailing lists are missing ('+d.missing.join(', ')+'): press "Set up Brevo lists".':'Brevo is connected and all the mailing lists are there. Welcome emails come from '+d.setup.from.welcome.email+', "New this month" emails from '+d.setup.from.news.email+'.';
+    const tb=$('emLists');tb.innerHTML='';(d.lists||[]).forEach(l=>{const tr=document.createElement('tr');[l.name,l.people==null?'':String(l.people)].forEach(t=>{const c=document.createElement('td');c.textContent=t;tr.appendChild(c);});tb.appendChild(tr);});
+    $('emListsBox').hidden=!(d.lists||[]).length;
+  }
+  showSetup();
+  $('emSetupBtn').addEventListener('click',async()=>{$('emSetupBtn').disabled=true;const r=await post({action:'setup'});$('emSetupMsg').textContent=r.message||r.error;try{d=await (await fetch('/admin/email',{cache:'no-store'})).json();showSetup();}catch(e){}$('emSetupBtn').disabled=false;});
+  const wt=$('emWelcome');
+  d.products.forEach(p=>{const tr=document.createElement('tr');
+    const a=document.createElement('td');a.textContent=p.title;tr.appendChild(a);
+    const b=document.createElement('td');b.textContent=COLOURS[p.theme];tr.appendChild(b);
+    const c=document.createElement('td');c.style.whiteSpace='nowrap';
+    const pv=document.createElement('a');pv.className='btn ghost';pv.href='/admin/email?preview='+encodeURIComponent(p.key);pv.target='_blank';pv.rel='noopener';pv.textContent='Preview';c.appendChild(pv);
+    const tbn=document.createElement('button');tbn.className='btn ghost';tbn.type='button';tbn.textContent='Send me a test';tbn.style.marginLeft='8px';tbn.disabled=!d.setup.brevoKey;
+    tbn.addEventListener('click',async()=>{tbn.disabled=true;const r=await post({action:'test',key:p.key});$('emTestMsg').hidden=false;$('emTestMsg').textContent=r.message||r.error;tbn.disabled=false;});
+    c.appendChild(tbn);tr.appendChild(c);wt.appendChild(tr);});
+  // "New this month" writer
+  const aud=$('nwAud');d.audiences.forEach(a=>{const o=document.createElement('option');o.value=a.key;o.textContent=a.label+' · '+COLOURS[a.theme];aud.appendChild(o);});
+  let lib=[];try{lib=(await (await fetch('/members/library.json',{cache:'no-store'})).json()).items||[];}catch(e){}
+  const ROLE={personal:w=>w.includes('starter')||w.includes('plus'),plus:w=>w.includes('plus'),starter:w=>w.includes('starter'),guides:w=>w.some(x=>x.startsWith('guide_')&&!/under10|10to13|family/.test(x)),parents:w=>w.includes('parents'),business:()=>true};
+  const monthAgo=Date.now()-31*864e5;
+  function drawItems(){const box=$('nwItems');box.innerHTML='';const f=ROLE[aud.value]||(()=>true);
+    lib.filter(i=>i.url&&i.url.startsWith('/members/')&&f(i.who||[])).sort((a,b)=>String(b.added).localeCompare(String(a.added))).forEach((i,n)=>{
+      const l=document.createElement('label');l.style.display='flex';l.style.gap='8px';l.style.alignItems='flex-start';
+      const cb=document.createElement('input');cb.type='checkbox';cb.checked=Date.parse(i.added)>=monthAgo&&n<6;cb.dataset.idx=lib.indexOf(i);
+      const sp=document.createElement('span');sp.textContent=i.title+' ('+i.added+')';l.appendChild(cb);l.appendChild(sp);box.appendChild(l);});
+    $('nwPipWrap').hidden=aud.value==='business';}
+  aud.addEventListener('change',drawItems);drawItems();
+  function form(){const items=[...document.querySelectorAll('#nwItems input:checked')].map(cb=>{const i=lib[cb.dataset.idx];return {title:i.title,url:i.url,blurb:i.blurb||''};});
+    return {audience:aud.value,subject:$('nwSubject').value.trim(),heading:$('nwHeading').value.trim()||'New in your members library',intro:$('nwIntro').value.trim(),pip:aud.value==='business'?'':$('nwPip').value.trim(),items};}
+  $('nwPreview').addEventListener('click',()=>{const f=form();const q=new URLSearchParams({news:f.audience,heading:f.heading,intro:f.intro,pip:f.pip,items:JSON.stringify(f.items)});window.open('/admin/email?'+q.toString(),'_blank','noopener');});
+  $('nwDraft').addEventListener('click',async()=>{const f=form();const m=$('nwMsg');m.hidden=false;
+    if(!f.subject){m.textContent='Please add a subject line first.';return;}
+    $('nwDraft').disabled=true;m.textContent='Saving…';const r=await post({action:'draft',...f});m.textContent=r.message||r.error;$('nwDraft').disabled=false;});
 })();
 </script>
 </body>
