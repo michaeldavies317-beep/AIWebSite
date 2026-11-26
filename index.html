@@ -126,6 +126,7 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:
 textarea{min-height:120px;resize:vertical}
 label{font-weight:600;font-size:.95rem;display:flex;flex-direction:column;gap:6px}
 .form{display:grid;gap:16px;max-width:560px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .notice{background:var(--accent-soft);border-radius:14px;padding:14px 18px;font-weight:600}
 
 /* tips */
@@ -221,7 +222,7 @@ details.faq p{margin-top:8px;color:var(--muted)}
 </symbol></defs></svg>
 
 
-<div class="preview-bar"><div class="wrap"><strong>Preview only.</strong> Prices and some wording are placeholders. Anything marked <span class="guess">guess</span> is my guess, for you to change. Forms and payments aren't connected yet.</div></div>
+<div class="preview-bar"><div class="wrap"><strong>Preview only.</strong> Prices and some wording are placeholders. Anything marked <span class="guess">guess</span> is my guess, for you to change. Payments aren't connected yet.</div></div>
 
 <header class="top"><div class="wrap">
   <a class="logo" href="#home"><span class="logo-mark"><span></span></span>Easy Start AI</a>
@@ -444,8 +445,9 @@ details.faq p{margin-top:8px;color:var(--muted)}
       <span class="eyebrow">Free download</span>
       <h2>Get all ten checks</h2>
       <p>One page, written for busy parents. Enter your email and we'll send it over, with an occasional tip.</p>
-      <form class="form demo-form" data-msg="Thanks! In the live site, the checklist would be emailed to you now.">
-        <label for="cl-email">Your email<input id="cl-email" type="email" required placeholder="you@example.com"></label>
+      <form class="form send-form" data-subject="[Parents] Checklist request" data-msg="Thanks! We'll email you the checklist shortly.">
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label for="cl-email">Your email<input id="cl-email" name="email" type="email" required placeholder="you@example.com"></label>
         <button class="btn primary" type="submit">Send me the checklist</button>
         <div class="notice" hidden></div>
       </form>
@@ -495,8 +497,9 @@ details.faq p{margin-top:8px;color:var(--muted)}
   </div></section>
   <section class="band"><div class="wrap grid2" style="align-items:center">
     <div class="stack"><h2>Get a tip in your inbox each week</h2><p>Free. One short email. Unsubscribe any time.</p></div>
-    <form class="form demo-form" data-msg="Thanks! In the live site, you'd now be on the weekly tips list.">
-      <label for="tips-email">Your email<input id="tips-email" type="email" required placeholder="you@example.com"></label>
+    <form class="form send-form" data-subject="[Tips] New sign-up" data-msg="Thanks! You're on the list for weekly tips.">
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label for="tips-email">Your email<input id="tips-email" name="email" type="email" required placeholder="you@example.com"></label>
       <button class="btn primary" type="submit">Send me tips</button>
       <div class="notice" hidden></div>
     </form>
@@ -552,11 +555,12 @@ details.faq p{margin-top:8px;color:var(--muted)}
       <p class="lead">Tell us a little about what you'd like help with. We'll reply within one working day <span class="guess">guess</span>.</p>
       <p>Prefer email? <strong>hello@easystartai.co.uk</strong></p>
     </div>
-    <form class="form demo-form" data-msg="Thanks! In the live site, this message would be sent to Mike's inbox.">
-      <label for="c-name">Your name<input id="c-name" required></label>
-      <label for="c-email">Your email<input id="c-email" type="email" required></label>
-      <label for="c-type">I'm asking about<select id="c-type"><option>My business</option><option>Help for me personally</option><option>Keeping my kids safe</option><option>Something else</option></select></label>
-      <label for="c-msg">What would you like help with?<textarea id="c-msg" placeholder="For example: I'd like to use AI to answer customer emails."></textarea></label>
+    <form class="form send-form" id="contactForm" data-msg="Thanks! Your message is on its way. We'll reply within one working day.">
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label for="c-name">Your name<input id="c-name" name="name" required></label>
+      <label for="c-email">Your email<input id="c-email" name="email" type="email" required></label>
+      <label for="c-type">I'm asking about<select id="c-type" name="topic"><option value="Business">My business</option><option value="Personal">Help for me personally</option><option value="Parents">Keeping my kids safe</option><option value="General">Something else</option></select></label>
+      <label for="c-msg">What would you like help with?<textarea id="c-msg" name="message" required placeholder="For example: I'd like to use AI to answer customer emails."></textarea></label>
       <button class="btn primary" type="submit">Send message</button>
       <div class="notice" hidden></div>
     </form>
@@ -590,8 +594,24 @@ details.faq p{margin-top:8px;color:var(--muted)}
   window.addEventListener('hashchange',show);show();
   menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o);});
 
-  document.querySelectorAll('.demo-form').forEach(f=>f.addEventListener('submit',e=>{
-    e.preventDefault();const n=f.querySelector('.notice');n.textContent=f.dataset.msg;n.hidden=false;f.reset();
+  // Forms: sent by Web3Forms to hello@easystartai.co.uk (forwards to Gmail). The key is public by design.
+  const FORM_KEY='WEB3FORMS_KEY_HERE';
+  document.querySelectorAll('.send-form').forEach(f=>f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const n=f.querySelector('.notice'),btn=f.querySelector('button[type=submit]'),label=btn.textContent;
+    const data=Object.fromEntries(new FormData(f));
+    if(data.botcheck)return;
+    let subject=f.dataset.subject;
+    if(f.id==='contactForm')subject='['+data.topic+'] New enquiry from '+data.name;
+    btn.disabled=true;btn.textContent='Sending…';
+    try{
+      const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+        body:JSON.stringify({...data,access_key:FORM_KEY,subject,from_name:'Easy Start AI website',replyto:data.email})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.success===false)throw new Error();
+      n.textContent=f.dataset.msg;f.reset();
+    }catch(err){n.textContent='Sorry, that didn\'t send. Please try again, or email hello@easystartai.co.uk.';}
+    n.hidden=false;btn.disabled=false;btn.textContent=label;
   }));
 
   // Free helper demo: canned answers, 3-question limit
