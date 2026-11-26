@@ -14,7 +14,17 @@ const html = (h) => new Response(h, { headers: { 'content-type': 'text/html; cha
 
 // The public site whose /email/ pictures and links the emails use.
 const siteFor = (url) => (url.hostname === 'admin.easystartai.co.uk' ? 'https://easystartai.co.uk' : 'https://dev.easystartai.co.uk');
-const mikeEmail = (request) => String(request.headers.get('cf-access-authenticated-user-email') || '').toLowerCase();
+// Who is logged in: Access's header, or else the email inside the Access token (same as /members/me).
+function mikeEmail(request) {
+  const h = request.headers.get('cf-access-authenticated-user-email');
+  if (h) return h.trim().toLowerCase();
+  const m = (request.headers.get('cookie') || '').match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
+  const jwt = request.headers.get('cf-access-jwt-assertion') || (m && m[1]) || '';
+  try {
+    const part = jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return String(JSON.parse(atob(part + '==='.slice((part.length + 3) % 4))).email || '').trim().toLowerCase();
+  } catch (e) { return ''; }
+}
 
 function newsFrom(o, site) {
   const a = AUDIENCES[o.audience] || AUDIENCES.personal;
