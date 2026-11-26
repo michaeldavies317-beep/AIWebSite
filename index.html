@@ -711,18 +711,19 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   const panel=document.getElementById('pipPanel'),launcher=document.getElementById('pipLauncher');
   const section=()=>document.body.dataset.section||'other';
   let intakeMode=false,intakeHist=[];
-  const showLeft=()=>{if(intakeMode){leftEl.textContent="Quote helper: doesn't use your free questions";return;}const l=MAX-used;leftEl.textContent=l>0?l+' free question'+(l===1?'':'s')+' left today':'No free questions left today';};
+  const showLeft=()=>{if(intakeMode){leftEl.textContent=MODES[intakeMode].left;return;}const l=MAX-used;leftEl.textContent=l>0?l+' free question'+(l===1?'':'s')+' left today':'No free questions left today';};
   function renderChips(){
     chips.innerHTML='';
-    if(intakeMode){const c=document.createElement('button');c.type='button';c.className='chip';c.textContent='Cancel the quote and ask a question instead';c.addEventListener('click',endIntake);chips.appendChild(c);return;}
+    if(intakeMode){const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=MODES[intakeMode].cancel;c.addEventListener('click',endIntake);chips.appendChild(c);return;}
     const list=prompts[section()]||prompts.other;list.forEach(t=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=t;c.addEventListener('click',()=>ask(t));chips.appendChild(c);});
+    if(section()==='business')chips.appendChild(quoteBtn('chip','Book a free discovery call','call'));
     chips.appendChild(quoteBtn('chip','Get a quote for a one-off job'));
   }
   function add(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;log.appendChild(b);log.scrollTop=log.scrollHeight;}
   function handoff(){
     const d=document.createElement('div');d.className='handoff';
     d.innerHTML=section()==='business'
-      ?'<a class="btn primary pkg" href="#contact" data-package="Discovery call">Book a free call</a><a class="btn ghost" href="#biz-packages">See packages</a>'
+      ?'<button class="btn primary pip-book" type="button">Book a free call</button><a class="btn ghost" href="#biz-packages">See packages</a>'
       :'<a class="btn primary" href="#contact">Message Mike</a><a class="btn ghost" href="#personal-plans">See support plans</a>';
     log.appendChild(d);log.scrollTop=log.scrollHeight;
   }
@@ -741,14 +742,14 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     guide_under10:['See the under 10s guide (£7)','#guides'],guide_10to13:['See the 10 to 13s guide (£7)','#guides'],
     guide_family:['See the Family set-up guide (£7)','#guides'],guide_bundle:['See the guide bundle (£15)','#guides'],
     starter:['See Starter support (£15/month)','#personal-plans'],plus:['See Plus support (£35/month)','#personal-plans'],
-    session:['Book a £45 session','#personal-plans'],discovery:['Book a free call','#contact','Discovery call'],
+    session:['Book a £45 session','#personal-plans'],discovery:['Book a free call',null,'call'],
     quote:['Get a quote','#biz-packages'],message_mike:['Message Mike','#contact'],
     tailored_quote:['Get a tailored quote',null]
   };
   function nextStep(id){
     const n=NEXT[id];if(!n)return handoff();
     const d=document.createElement('div');d.className='handoff';
-    if(!n[1]){d.appendChild(quoteBtn('btn primary',n[0]));log.appendChild(d);log.scrollTop=log.scrollHeight;return;}
+    if(!n[1]){d.appendChild(quoteBtn('btn primary',n[0],n[2]));log.appendChild(d);log.scrollTop=log.scrollHeight;return;}
     const a=document.createElement('a');a.className='btn primary'+(n[2]?' pkg':'');a.href=n[1];a.textContent=n[0];if(n[2])a.dataset.package=n[2];
     d.appendChild(a);
     if(['session','quote','discovery'].includes(id))d.appendChild(quoteBtn('btn ghost','Get a tailored quote'));
@@ -762,47 +763,69 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     add(hit?hit[1]:(section()==='business'?"Good question! That one is best answered on a free discovery call, where Mike can look at how your business works.":"Good question! That one needs a human touch. Mike can help you properly, either with a quick message or through a support plan."),'ai');
     if(!hit||used>=MAX)handoff();
   }
-  // Quote helper: Pip asks about a one-off job, then the visitor sends Mike a summary (by Web3Forms, like the contact form).
-  function quoteBtn(cls,label){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.addEventListener('click',startIntake);return b;}
-  function startIntake(){
+  // Quote helper and call booking: Pip asks a few questions, then the visitor sends Mike a summary (by Web3Forms, like the contact form).
+  // CALL_LINK: paste Mike's Cal.com booking link here (e.g. https://cal.com/easystartai/discovery). While it's empty,
+  // the call form asks for good days and times and Mike replies to arrange the call.
+  const CALL_LINK='';
+  const MODES={
+    intake:{opener:"Lovely, let's get Mike what he needs for a tailored quote. I'll ask a few quick questions, and they won't use up your free ones. First, what would you like AI to help you with?",
+      left:'Quote helper',cancel:'Cancel the quote and ask a question instead',key:'Goal',fallbackKey:'one-off job',subject:'Quote request',topic:'Pip quote request',
+      done:"Sent! Thanks. Mike will look at it and reply by email with a tailored quote.",
+      offline:"Mike can definitely quote for that. Tell him a bit about the job using the contact form, and he'll reply with a tailored price."},
+    call:{opener:"Great, let's book your free 20-minute call with Mike. A few quick questions first so he can make the most of it, and they won't use up your free ones. What kind of business is it, and roughly how many people work there?",
+      left:'Booking your free call',cancel:'Cancel booking and ask a question instead',key:'Business',fallbackKey:'business',subject:'Discovery call',topic:'Pip discovery call',
+      done:CALL_LINK?"Thanks! Mike has your notes. Now pick a time that suits you:":"Sent! Thanks. Mike will reply by email to confirm a time and send the video link.",
+      offline:"Mike would love to chat. Send a quick message with the contact form and he'll reply to arrange your free call."}
+  };
+  function quoteBtn(cls,label,kind){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.addEventListener('click',()=>startIntake(kind||'intake'));return b;}
+  function startIntake(kind){
     if(intakeMode||busy)return;
-    intakeMode=true;intakeHist=[];
-    const opener="Lovely, let's get Mike what he needs for a tailored quote. I'll ask a few quick questions, and they won't use up your free ones. First, what would you like AI to help you with?";
+    intakeMode=kind;intakeHist=[];
+    const opener=MODES[kind].opener;
     add(opener,'ai');intakeHist.push({role:'assistant',content:opener});
     renderChips();showLeft();input.focus();
   }
   function endIntake(){intakeMode=false;intakeHist=[];renderChips();showLeft();add("No problem. Ask me anything about AI.",'ai');}
+  function callLink(name,email,notes){
+    const u=new URL(CALL_LINK);u.searchParams.set('name',name);u.searchParams.set('email',email);u.searchParams.set('notes',notes.slice(0,500));return u.toString();
+  }
   function quoteForm(summary){
+    const kind=intakeMode,M=MODES[kind];
     const f=document.createElement('form');f.className='pip-quote stack';
     f.innerHTML='<label>Summary for Mike (you can edit it)<textarea name="summary" rows="7" required></textarea></label>'+
       '<label>Your name<input name="name" required autocomplete="name"></label>'+
       '<label>Your email<input name="email" type="email" required autocomplete="email"></label>'+
+      (kind==='call'&&!CALL_LINK?'<label>Good days and times for a 20-minute video call<input name="times" required placeholder="e.g. weekday mornings, or Tue after 2pm"></label>':'')+
       '<input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off">'+
-      '<button class="btn primary" type="submit">Send to Mike</button><p class="small notice" hidden></p>';
+      '<button class="btn primary" type="submit">'+(kind==='call'&&CALL_LINK?'Next: pick a time':'Send to Mike')+'</button><p class="small notice" hidden></p>';
     f.summary.value=summary;
     f.addEventListener('submit',async e=>{
       e.preventDefault();if(f.botcheck.checked)return;
-      const btn=f.querySelector('button'),n=f.querySelector('.notice');btn.disabled=true;btn.textContent='Sending…';
-      const goal=((f.summary.value.match(/Goal:\s*(.*)/i)||[])[1]||'one-off job').slice(0,60);
+      const btn=f.querySelector('button'),label=btn.textContent,n=f.querySelector('.notice');btn.disabled=true;btn.textContent='Sending…';
+      const what=((f.summary.value.match(new RegExp(M.key+':\\s*(.*)','i'))||[])[1]||M.fallbackKey).slice(0,60);
+      const message=f.summary.value+(f.times?'\nGood times: '+f.times.value:'')+(kind==='call'&&CALL_LINK?'\n(They were sent to the booking calendar to pick a time.)':'');
       try{
         const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-          body:JSON.stringify({access_key:FORM_KEY,subject:'[Pip] Quote request: '+goal+' from '+f.name.value,from_name:'Easy Start AI website (Pip)',replyto:f.email.value,
-            name:f.name.value,email:f.email.value,topic:'Pip quote request',page:section(),message:f.summary.value})});
+          body:JSON.stringify({access_key:FORM_KEY,subject:'[Pip] '+M.subject+': '+what+' from '+f.name.value,from_name:'Easy Start AI website (Pip)',replyto:f.email.value,
+            name:f.name.value,email:f.email.value,topic:M.topic,page:section(),message})});
         const j=await r.json().catch(()=>({}));
         if(!r.ok||j.success===false)throw new Error();
-        f.remove();add("Sent! Thanks. Mike will look at it and reply by email with a tailored quote.",'ai');
+        const link=kind==='call'&&CALL_LINK?callLink(f.name.value,f.email.value,f.summary.value):null;
+        f.remove();add(M.done,'ai');
+        if(link){const d=document.createElement('div');d.className='handoff';const a=document.createElement('a');a.className='btn primary';a.href=link;a.target='_blank';a.rel='noopener';a.textContent='Pick a time';d.appendChild(a);log.appendChild(d);log.scrollTop=log.scrollHeight;window.open(link,'_blank','noopener');}
         intakeMode=false;intakeHist=[];renderChips();showLeft();
-      }catch(err){n.textContent="Sorry, that didn't send. Please try again, or email hello@easystartai.co.uk.";n.hidden=false;btn.disabled=false;btn.textContent='Send to Mike';}
+      }catch(err){n.textContent="Sorry, that didn't send. Please try again, or email hello@easystartai.co.uk.";n.hidden=false;btn.disabled=false;btn.textContent=label;}
     });
     log.appendChild(f);log.scrollTop=log.scrollHeight;
   }
   async function intakeAsk(q){
     busy=true;
+    const kind=intakeMode;
     const typing=document.createElement('div');typing.className='bubble ai typing';typing.textContent='Pip is thinking…';log.appendChild(typing);log.scrollTop=log.scrollHeight;
     let data=null;
     try{
       const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),25000);
-      const r=await fetch('/api/pip-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mode:'intake',s:section(),q,history:intakeHist.slice(-20)}),signal:ctrl.signal});
+      const r=await fetch('/api/pip-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mode:kind,s:section(),q,history:intakeHist.slice(-20)}),signal:ctrl.signal});
       clearTimeout(t);if(r.ok)data=await r.json();
     }catch(e){}
     typing.remove();busy=false;
@@ -812,8 +835,10 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     }else{
       // AI not available: send them to the contact form instead.
       intakeMode=false;renderChips();showLeft();
-      add("Mike can definitely quote for that. Tell him a bit about the job using the contact form, and he'll reply with a tailored price.",'ai');
-      const d=document.createElement('div');d.className='handoff';d.innerHTML='<a class="btn primary" href="#contact">Message Mike</a>';log.appendChild(d);log.scrollTop=log.scrollHeight;
+      add(MODES[kind].offline,'ai');
+      const d=document.createElement('div');d.className='handoff';
+      d.innerHTML=kind==='call'?'<a class="btn primary pkg" href="#contact" data-package="Discovery call">Message Mike</a>':'<a class="btn primary" href="#contact">Message Mike</a>';
+      log.appendChild(d);log.scrollTop=log.scrollHeight;
     }
   }
   let busy=false;
@@ -847,7 +872,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   launcher.addEventListener('click',openPip);
   document.getElementById('pipMin').addEventListener('click',closePip);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)closePip();});
-  document.addEventListener('click',e=>{if(e.target.closest('.open-pip'))openPip();if(e.target.closest('#log a'))closePip();});
+  document.addEventListener('click',e=>{if(e.target.closest('.pip-book'))startIntake('call');if(e.target.closest('.open-pip'))openPip();if(e.target.closest('#log a'))closePip();});
   window.addEventListener('hashchange',()=>{if(!panel.hidden)renderChips();});
   form.addEventListener('submit',e=>{e.preventDefault();ask(input.value);input.value='';});
   showLeft();renderChips();
