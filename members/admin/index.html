@@ -27,6 +27,22 @@
 </table></div>
 <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn" id="copy" type="button">Copy the updated list</button><span class="small" id="copied" aria-live="polite"></span></div>
 <textarea id="out" rows="8" style="width:100%;font-family:ui-monospace,monospace;font-size:.85rem;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink)" hidden aria-label="Updated list"></textarea>
+
+<section class="stack" id="pip" style="gap:16px;margin-top:24px">
+  <h2>What people ask Pip</h2>
+  <p class="lead">The questions people ask Pip, saved anonymously. Questions Pip couldn't answer are the best ideas for new tips and guides.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
+    <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
+  </div>
+  <div id="pipStatus" class="note" aria-live="polite">Loading…</div>
+  <div id="pipBody" hidden class="stack" style="gap:16px">
+    <div class="tablebox"><table><thead><tr><th>Section</th><th>Questions</th><th>Pip had no answer</th><th>Asked after free limit</th></tr></thead><tbody id="pipCounts"></tbody></table></div>
+    <div><h3>Words that come up most (in questions Pip couldn't answer)</h3><p id="pipWords" class="small"></p></div>
+    <div><h3>Questions Pip couldn't answer</h3><div class="tablebox"><table><thead><tr><th>Date</th><th>Section</th><th>Question</th></tr></thead><tbody id="pipGaps"></tbody></table></div></div>
+    <p class="small">Tip: download the spreadsheet and send it to Claude, who will group the questions into themes and suggest guides. Rows older than 12 months are deleted automatically.</p>
+  </div>
+</section>
 </div></main>
 <footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>Questions? support@easystartai.co.uk</span></div></footer>
 <script>
@@ -47,6 +63,32 @@
   render();
   document.getElementById('copy').addEventListener('click',async()=>{const txt=JSON.stringify(data,null,2);const out=document.getElementById('out');out.value=txt;out.hidden=false;
     try{await navigator.clipboard.writeText(txt);document.getElementById('copied').textContent='Copied. Paste it to Claude.';}catch(e){out.select();document.getElementById('copied').textContent='Select all the text below and copy it.';}});
+})();
+
+(()=>{
+  const m=document.getElementById('pipMonth'),st=document.getElementById('pipStatus'),body=document.getElementById('pipBody'),csv=document.getElementById('pipCsv');
+  m.value=new Date().toISOString().slice(0,7);
+  const STOP=new Set('a an the and or but if is are was be to of in on for with my me i it can do does how what which who why when where should would could will you your we our us this that there their they them at as by from about any some get got have has just like want need not no yes so up out into than then too very much many more most best good help ai'.split(' '));
+  const cell=(tr,t)=>{const td=document.createElement('td');td.textContent=t;tr.appendChild(td);};
+  async function load(){
+    csv.href='/members/admin/pip-questions?format=csv&month='+m.value;
+    st.hidden=false;st.textContent='Loading…';body.hidden=true;
+    let d;try{d=await (await fetch('/members/admin/pip-questions?month='+m.value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the questions. Try refreshing the page.';return;}
+    if(d.configured===false){st.textContent='The question log is not switched on yet. It needs the PIP_DB database set up in Cloudflare (see the setup guide).';return;}
+    const rows=d.rows||[];
+    if(!rows.length){st.textContent='No questions saved for this month yet.';return;}
+    st.hidden=true;body.hidden=false;
+    const counts={};rows.forEach(r=>{const c=counts[r.section]||(counts[r.section]={n:0,gap:0,over:0});c.n++;if(!r.answered)c.gap++;if(r.over_limit)c.over++;});
+    const tb=document.getElementById('pipCounts');tb.innerHTML='';
+    Object.keys(counts).sort().forEach(k=>{const tr=document.createElement('tr');cell(tr,k.charAt(0).toUpperCase()+k.slice(1));cell(tr,counts[k].n);cell(tr,counts[k].gap);cell(tr,counts[k].over);tb.appendChild(tr);});
+    const gaps=rows.filter(r=>!r.answered);
+    const freq={};gaps.forEach(r=>new Set(r.question.toLowerCase().match(/[a-z']{3,}/g)||[]).forEach(w=>{if(!STOP.has(w))freq[w]=(freq[w]||0)+1;}));
+    const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,15);
+    document.getElementById('pipWords').textContent=top.length?top.map(([w,n])=>w+' ('+n+')').join(', '):'Not enough questions yet.';
+    const gb=document.getElementById('pipGaps');gb.innerHTML='';
+    gaps.forEach(r=>{const tr=document.createElement('tr');cell(tr,r.day);cell(tr,r.section);cell(tr,r.question);gb.appendChild(tr);});
+  }
+  m.addEventListener('change',load);load();
 })();
 </script>
 </body>

@@ -628,12 +628,12 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <input id="chatInput" aria-label="Your question" placeholder="Type a question…" autocomplete="off">
     <button class="btn primary" type="submit">Ask</button>
   </form>
-  <p class="small pip-note">Preview: Pip's answers are pre-written examples for now.</p>
+  <p class="small pip-note">Preview: Pip's answers are pre-written examples for now. Questions are saved anonymously to help us write better guides, so please don't include names or contact details. <a href="/privacy/">Privacy</a></p>
 </section>
 
 <footer><div class="wrap">
   <span>© 2026 Easy Start AI</span>
-  <nav aria-label="Footer"><a href="#tips">Tips</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><span>Privacy (coming soon)</span></nav>
+  <nav aria-label="Footer"><a href="#tips">Tips</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><a href="/privacy/">Privacy</a></nav>
 </div></footer>
 
 <script>
@@ -709,12 +709,20 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
       :'<a class="btn primary" href="#contact">Message Mike</a><a class="btn ghost" href="#personal-plans">See support plans</a>';
     log.appendChild(d);log.scrollTop=log.scrollHeight;
   }
+  // Save the question anonymously (emails and phone numbers blanked out) so Mike can see what people want to know.
+  function logQ(q,answered,over){
+    try{
+      const clean=q.replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g,'[email]').replace(/(\+?\d[\d\s().-]{8,}\d)/g,'[number]').slice(0,300);
+      fetch('/api/pip-log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({s:section(),q:clean,m:answered?1:0,o:over?1:0}),keepalive:true}).catch(()=>{});
+    }catch(e){}
+  }
   function ask(q){
     q=q.trim();if(!q)return;
     add(q,'you');
-    if(used>=MAX){setTimeout(()=>{add(section()==='business'?"That's all my free questions for today. A free discovery call with Mike is the best next step.":"That's all my free questions for today. For more help, Mike can take it from here, or a support plan gets you a real person with a set reply time.",'ai');handoff();},300);return;}
+    if(used>=MAX){logQ(q,false,true);setTimeout(()=>{add(section()==='business'?"That's all my free questions for today. A free discovery call with Mike is the best next step.":"That's all my free questions for today. For more help, Mike can take it from here, or a support plan gets you a real person with a set reply time.",'ai');handoff();},300);return;}
     used++;save();
     const hit=answers.find(a=>a[0].test(q));
+    logQ(q,!!hit,false);
     setTimeout(()=>{
       add(hit?hit[1]:(section()==='business'?"Good question! That one is best answered on a free discovery call, where Mike can look at how your business works.":"Good question! That one needs a human touch. Mike can help you properly, either with a quick message or through a support plan."),'ai');
       if(!hit||used>=MAX)handoff();
