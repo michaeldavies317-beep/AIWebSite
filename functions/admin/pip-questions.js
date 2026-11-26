@@ -1,10 +1,10 @@
-// GET /members/admin/pip-questions?month=2026-11 -> the questions people asked Pip that month.
+// GET /admin/pip-questions?month=2026-11 -> the questions people asked Pip that month.
 // Add &format=csv to download a spreadsheet file.
-// This sits under /members/admin, so Cloudflare Access only lets Mike in.
+// Only served on the admin address (see _middleware.js), which Cloudflare Access locks to Mike.
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
 // Who is signed in? Access normally adds a header; on this site it often doesn't, so fall back to
-// the Access sign-in token (same approach as /members/me). The real lock is the Access app on /members/admin.
+// the Access sign-in token (same approach as /members/me). The real lock is the Access app on the admin address.
 function emailFrom(request) {
   const h = request.headers.get('cf-access-authenticated-user-email');
   if (h) return h.trim().toLowerCase();

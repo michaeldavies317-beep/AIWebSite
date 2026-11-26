@@ -5,20 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='44' width='14' height='14' rx='5' fill='%230f8a74' opacity='.45'/%3E%3Crect x='22' y='32' width='14' height='26' rx='5' fill='%230f8a74' opacity='.72'/%3E%3Crect x='40' y='20' width='14' height='38' rx='5' fill='%230f8a74'/%3E%3Ccircle cx='47' cy='9' r='6.5' fill='%23ffd166'/%3E%3C/svg%3E">
-<title>Mike's file list · Easy Start AI Members</title>
+<title>Mike's admin · Easy Start AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/members/members.css">
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="logo" href="/members/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="44" width="14" height="14" rx="5" fill="var(--accent)" opacity=".45"/><rect x="22" y="32" width="14" height="26" rx="5" fill="var(--accent)" opacity=".72"/><rect x="40" y="20" width="14" height="38" rx="5" fill="var(--accent)"/><circle cx="47" cy="9" r="6.5" fill="var(--sun)"/></svg><span>Easy Start <span class="ai">AI</span> <small>Members</small></span></a>
-  <nav class="mnav" aria-label="Members"><a href="/members/">Library</a><a href="/">Main site</a><a href="/cdn-cgi/access/logout">Log out</a></nav>
+  <a class="logo" href="/admin/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="44" width="14" height="14" rx="5" fill="var(--accent)" opacity=".45"/><rect x="22" y="32" width="14" height="26" rx="5" fill="var(--accent)" opacity=".72"/><rect x="40" y="20" width="14" height="38" rx="5" fill="var(--accent)"/><circle cx="47" cy="9" r="6.5" fill="var(--sun)"/></svg><span>Easy Start <span class="ai">AI</span> <small>Admin</small></span></a>
+  <nav class="mnav" aria-label="Admin"><a href="/members/" data-main>Members library</a><a href="/" data-main>Main site</a><a href="/cdn-cgi/access/logout">Log out</a></nav>
 </div></header>
 <main><div class="wrap stack" style="gap:24px">
 <div class="stack">
-  <h1>Mike's file list</h1>
-  <p class="lead">Who can open each tip and template. Only you can see this page.</p>
+  <h1>Mike's admin</h1>
+  <p class="lead">Your private tools. This whole address is locked, so only you can get in.</p>
+</div>
+<div class="stack">
+  <h2>File list</h2>
+  <p class="lead">Who can open each tip and template.</p>
 </div>
 <div class="note">To change who sees a file, tick or untick below, then click <strong>Copy the updated list</strong> and send it to Claude (or paste it into <code>members/library.json</code> on GitHub). Plus members can always open everything.</div>
 <div class="tablebox"><table>
@@ -47,6 +51,9 @@
 </div></main>
 <footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>Questions? support@easystartai.co.uk</span></div></footer>
 <script>
+// Library and Main site links go to the public address (admin-dev. -> dev., admin. -> the live site).
+(()=>{const h=location.hostname,main=h.startsWith('admin-dev.')?h.replace(/^admin-dev\./,'dev.'):h.startsWith('admin.')?h.replace(/^admin\./,''):h;
+  document.querySelectorAll('a[data-main]').forEach(a=>{a.href='https://'+main+a.getAttribute('href');});})();
 (async()=>{
   const ROLES=['free','starter','plus','parents'];
   const data=await (await fetch('/members/library.json',{cache:'no-store'})).json();
@@ -72,9 +79,9 @@
   const STOP=new Set('a an the and or but if is are was be to of in on for with my me i it can do does how what which who why when where should would could will you your we our us this that there their they them at as by from about any some get got have has just like want need not no yes so up out into than then too very much many more most best good help ai'.split(' '));
   const cell=(tr,t)=>{const td=document.createElement('td');td.textContent=t;tr.appendChild(td);};
   async function load(){
-    csv.href='/members/admin/pip-questions?format=csv&month='+m.value;
+    csv.href='/admin/pip-questions?format=csv&month='+m.value;
     st.hidden=false;st.textContent='Loading…';body.hidden=true;
-    let d;try{d=await (await fetch('/members/admin/pip-questions?month='+m.value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the questions. Try refreshing the page.';return;}
+    let d;try{d=await (await fetch('/admin/pip-questions?month='+m.value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the questions. Try refreshing the page.';return;}
     if(d.configured===false){st.textContent='The question log is not switched on yet. It needs the PIP_DB database set up in Cloudflare (see the setup guide).';return;}
     if(d.signedIn===false){st.textContent='Your sign-in has expired. Click Log out at the top, then open this page again.';return;}
     if(d.error){st.textContent='Problem reading the questions: '+d.error+'. Please send this message to Claude.';return;}
