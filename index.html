@@ -144,6 +144,9 @@ label{font-weight:600;font-size:.95rem;display:flex;flex-direction:column;gap:6p
 
 /* tips */
 .tip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:8px}
+.panel:target{outline:3px solid var(--accent);outline-offset:4px;animation:planpulse 1.2s ease-out 2}
+@keyframes planpulse{0%{box-shadow:0 0 0 0 var(--accent)}100%{box-shadow:0 0 0 14px transparent}}
+@media (prefers-reduced-motion:reduce){.panel:target{animation:none}}
 .tip.locked{background:repeating-linear-gradient(135deg,var(--surface) 0 12px,var(--bg) 12px 24px)}
 .tip .meta{font-size:.82rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
 
@@ -431,8 +434,8 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   <section id="personal-plans"><div class="wrap stack" style="gap:28px">
     <h2>Support from a real person, with reply times you can count on <span class="guess">guess prices</span></h2>
     <div class="grid3">
-      <div class="panel"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul><a class="btn primary join" data-plan="starter" href="#contact">Join Starter</a></div>
-      <div class="panel feature"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul><a class="btn primary join" data-plan="plus" href="#contact">Join Plus</a></div>
+      <div class="panel" id="plan-starter"><h3>Starter</h3><p class="price">£15<small> / month</small></p><ul class="ticks"><li>Message us any time</li><li>Reply within 2 working days</li><li>Members' tips and templates</li></ul><a class="btn primary join" data-plan="starter" href="#contact">Join Starter</a></div>
+      <div class="panel feature" id="plan-plus"><span class="pill">Most popular</span><h3>Plus</h3><p class="price">£35<small> / month</small></p><ul class="ticks"><li>Reply within 1 working day</li><li>A 30-minute set-up call to start</li><li>Everything in Starter</li></ul><a class="btn primary join" data-plan="plus" href="#contact">Join Plus</a></div>
       <div class="panel"><span class="pill">Made for you</span><h3>Custom package</h3><p class="price q">Priced to fit</p><p>Need more than a one-off hand? We'll put together a package around what you want to achieve.</p><ul class="ticks"><li>Starts with a free discovery call</li><li>Sessions booked at times that suit you</li></ul><button class="btn primary pip-quote-start" type="button">Get a quote</button><a class="small pkg-time alt-link" href="#contact">or book a free discovery call</a></div>
     </div>
     <div class="panel" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
@@ -545,8 +548,8 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     <article class="tip" data-cat="business"><div class="meta"><span class="pill">Business</span><span>1 min</span></div><h3>Keep private data out</h3><p>Don't paste in customer names, bank details or anything confidential unless your AI tool is on a business plan you trust. Swap names for "Customer A".</p><p class="try">Try this</p><p class="prompt">Customer A has asked for a refund on order 1. Draft a polite reply.</p></article>
     <article class="tip" data-cat="parents"><div class="meta"><span class="pill">Parents</span><span>2 min</span></div><h3>Try it together first</h3><p>Ask a chatbot something silly with your child. It's the easiest way to start talking about how it works and what not to share.</p><p class="try">Try this</p><p class="prompt">Write a short poem about our dog who thinks he's a cat.</p></article>
     <article class="tip" data-cat="parents"><div class="meta"><span class="pill">Parents</span><span>2 min</span></div><h3>Homework helper, not homework doer</h3><p>Agree that AI can explain and quiz, but the work stays theirs. Most schools are happy with that line.</p><p class="try">Try this</p><p class="prompt">Explain photosynthesis to a 12-year-old, then give me three quiz questions.</p></article>
-    <article class="tip locked" data-cat="everyone"><div class="meta"><span class="pill">Members</span><span>5 min</span></div><h3>A week of meals in 10 minutes</h3><p>Our step-by-step template, ready to copy.</p><a href="#pricing">Unlock with membership →</a></article>
-    <article class="tip locked" data-cat="business"><div class="meta"><span class="pill">Members</span><span>6 min</span></div><h3>Your first AI assistant for work</h3><p>Set up a helper that knows your business, in one sitting.</p><a href="#pricing">Unlock with membership →</a></article>
+    <article class="tip locked" data-cat="everyone"><div class="meta"><span class="pill">Members</span><span>5 min</span></div><h3>A week of meals in 10 minutes</h3><p>Our step-by-step template, ready to copy.</p><a href="#plan-starter">Unlock with Starter, £15 a month →</a></article>
+    <article class="tip locked" data-cat="business"><div class="meta"><span class="pill">Members</span><span>6 min</span></div><h3>Your first AI assistant for work</h3><p>Set up a helper that knows your business, in one sitting.</p><a href="#plan-plus">Unlock with Plus, £35 a month →</a></article>
   </div></section>
   <section class="band"><div class="wrap grid2" style="align-items:center">
     <div class="stack"><h2>Get a tip in your inbox each week</h2><p>Free. One short email. Unsubscribe any time.</p></div>
@@ -655,7 +658,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
   const views=[...document.querySelectorAll('[data-view]')];
   const links=[...document.querySelectorAll('nav.main a')];
   const nav=document.getElementById('mainNav'), menuBtn=document.getElementById('menuBtn');
-  const anchors={helper:'personal',checklist:'parents',guides:'parents','biz-packages':'business','personal-plans':'personal','meet-pip':'home'};
+  const anchors={helper:'personal',checklist:'parents',guides:'parents','biz-packages':'business','personal-plans':'personal','plan-starter':'personal','plan-plus':'personal','meet-pip':'home'};
   function show(){
     let h=(location.hash||'#home').slice(1);
     let view=anchors[h]||h;
@@ -665,7 +668,7 @@ body[data-section="business"] .pip-launcher .pl-label{display:none}
     links.forEach(a=>a.getAttribute('href')==='#'+view?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
     nav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');
     const target=anchors[h]?document.getElementById(h):null;
-    if(target) target.scrollIntoView({block:'start'}); else window.scrollTo(0,0);
+    if(target) target.scrollIntoView({block:h.startsWith('plan-')?'center':'start'}); else window.scrollTo(0,0);
   }
   window.addEventListener('hashchange',show);show();
   menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o);});
