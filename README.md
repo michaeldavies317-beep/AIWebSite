@@ -59,6 +59,6 @@ Until this is done, Pip works as normal and nothing is saved.
 
 ## Emails (welcome + "New this month")
 `functions/api/stripe-webhook.js` calls `functions/_email/` after each purchase: a branded welcome email per product (once per order, via Brevo), and the buyer is added to the matching Brevo list (Starter members, Plus members, Single guide buyers, Parent guide buyers). When a plan ends they come off the Starter/Plus list. Templates and colours: `functions/_email/templates.js` (Personal teal, Parents amber with the sun band, Business blue). Pictures for emails (PNG, email apps can't show SVG) are in `email/`.
-- Needs the `BREVO_API_KEY` secret. Without it nothing changes and no email is sent.
+- Needs the `BREVO_API_KEY` secret (a Brevo API key `xkeysib-`, restricted: Transactional email All, Contacts All, Email campaigns Read/write). Without it nothing changes and no email is sent. Brevo disables keys unused for 90 days: opening admin > Emails counts as use.
 - Admin (`/admin/` > Emails): preview each welcome email, send yourself a test, create the Brevo lists, and write a "New this month" email that is saved as a Brevo campaign draft (sent from Brevo, with unsubscribe).
 - Adding a product: add it to `PRODUCTS` and `KEYS` in `templates.js` too.
