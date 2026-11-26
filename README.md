@@ -9,6 +9,8 @@ The password lock is switched off for now. Search engines are still asked not to
 ## Launch checklist (members and payments)
 - Merge dev into main so /welcome/ and /members/ exist on the live site (Stripe redirects to easystartai.co.uk/welcome/).
 - Swap the seven Stripe TEST links in the PAY list in index.html for live-mode links.
+- Billing portal ("Manage or cancel your plan"): in LIVE Stripe, Settings > Billing > Customer portal, copy the sandbox settings (cancel at end of period, reasons on, no email change, no plan switching), activate the login link, and swap the TEST link `billing.stripe.com/p/login/test_...` in members/index.html, welcome/index.html and terms/index.html. Set the return URL and privacy/terms links to easystartai.co.uk.
+- Recreate the Stripe Workflow "Email Mike when a plan ends" in live mode (sandbox workflows don't carry over).
 - Swap the eight TEST "buy" links in members/library.json (5 Plus guides at £9, 3 parent guides) for live-mode links.
 - Set up Cloudflare Access for easystartai.co.uk/members paths (same apps as on dev).
 - Check CF_API_TOKEN (secret) and CF_ACCOUNT_ID (text) exist for the **Production** environment too (Pages Settings, environment dropdown). dev uses the Preview copies; the live site needs Production ones or the library can't show plans. Test at easystartai.co.uk/members/me (should say "configured":true).
