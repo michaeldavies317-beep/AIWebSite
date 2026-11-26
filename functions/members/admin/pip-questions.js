@@ -10,9 +10,12 @@ export async function onRequestGet({ request, env }) {
   const month = /^\d{4}-\d{2}$/.test(url.searchParams.get('month') || '') ? url.searchParams.get('month') : new Date().toISOString().slice(0, 7);
   let rows = [];
   try {
-    const r = await env.PIP_DB.prepare('SELECT day, section, question, answered, over_limit FROM questions WHERE substr(day, 1, 7) = ? ORDER BY day DESC, id DESC').bind(month).all();
+    const r = await env.PIP_DB.prepare('SELECT day, section, question, answered, over_limit FROM questions WHERE substr(day, 1, 7) = ?1 ORDER BY day DESC, id DESC').bind(month).all();
     rows = r.results || [];
-  } catch (e) { rows = []; /* table not created yet: nobody has asked anything */ }
+  } catch (e) {
+    if (!/no such table/i.test(String(e && e.message))) return json({ configured: true, error: String(e && e.message || e).slice(0, 300), rows: [] });
+    rows = []; /* table not created yet: nobody has asked anything */
+  }
   if (url.searchParams.get('format') === 'csv') {
     const cell = (v) => '"' + String(v).replace(/"/g, '""') + '"';
     const csv = ['Date,Section,Question,Pip had an answer,After free limit']

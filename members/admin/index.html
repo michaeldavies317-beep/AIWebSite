@@ -76,6 +76,7 @@
     st.hidden=false;st.textContent='Loading…';body.hidden=true;
     let d;try{d=await (await fetch('/members/admin/pip-questions?month='+m.value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load the questions. Try refreshing the page.';return;}
     if(d.configured===false){st.textContent='The question log is not switched on yet. It needs the PIP_DB database set up in Cloudflare (see the setup guide).';return;}
+    if(d.error){st.textContent='Problem reading the questions: '+d.error+'. Please send this message to Claude.';return;}
     const rows=d.rows||[];
     if(!rows.length){st.textContent='No questions saved for this month yet.';return;}
     st.hidden=true;body.hidden=false;
@@ -93,7 +94,7 @@
     st.hidden=false;st.textContent='Sending a test question…';
     try{const r=await fetch('/api/pip-log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({s:'test',q:'Test question from the admin page',m:0,o:0})});
       const res=r.headers.get('x-pip-log')||('no answer (code '+r.status+')');
-      if(res==='saved'){m.value=new Date().toISOString().slice(0,7);await load();}
+      if(res==='saved'){m.value=new Date().toISOString().slice(0,7);await load();if(st.textContent.startsWith('No questions'))st.textContent='Test result: saved, but the list is still empty. Please open /members/admin/pip-check and send Claude what it says.';}
       else st.textContent='Test result: '+res+'. Please send this message to Claude.';
     }catch(e){st.textContent='Test result: could not reach the log ('+e.message+'). Please send this message to Claude.';}
   });
