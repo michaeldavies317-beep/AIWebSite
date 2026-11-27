@@ -17,7 +17,7 @@ The password lock is switched off for now. Search engines are still asked not to
 - Swap the eight TEST "buy" links in members/library.json (5 Plus guides at £9, 3 parent guides) for live-mode links.
 - Set up Cloudflare Access for easystartai.co.uk/members paths (same apps as on dev).
 - Check CF_API_TOKEN (secret) and CF_ACCOUNT_ID (text) exist for the **Production** environment too (Pages Settings, environment dropdown). dev uses the Preview copies; the live site needs Production ones or the library can't show plans. Test at easystartai.co.uk/members/me (should say "configured":true).
-- Switch on search indexing: remove the noindex tag and allow robots.txt.
+- Switch on search indexing: remove the noindex tag in index.html and replace robots.txt with the launch version written in its comments (it keeps /members/, /admin/, /welcome/ and /api/ out and points to the sitemap). Then submit https://easystartai.co.uk/sitemap.xml in Google Search Console and Bing Webmaster Tools.
 - Legal pages (/privacy/, /terms/, /cookies/): fill every amber [PLACEHOLDER] (legal name, ICO number), then remove the "Draft, not legal advice" banner.
 - Cloudflare Access: set Session duration to 30 days on every members app (the Cookies page says 30 days).
 - Stripe: Settings > Billing > Subscriptions and emails, turn on "Send emails about upcoming renewals" 7 days before (the Terms promise this).
@@ -71,3 +71,10 @@ Until this is done, Pip works as normal and nothing is saved.
 - Needs the `BREVO_API_KEY` secret (a Brevo API key `xkeysib-`, restricted: Transactional email All, Contacts All, Email campaigns Read/write). Without it nothing changes and no email is sent. Brevo disables keys unused for 90 days: opening admin > Emails counts as use.
 - Admin (`/admin/` > Emails): preview each welcome email, send yourself a test, create the Brevo lists, and write a "New this month" email that is saved as a Brevo campaign draft (sent from Brevo, with unsubscribe).
 - Adding a product: add it to `PRODUCTS` and `KEYS` in `templates.js` too.
+
+## Search (SEO)
+- Each section has its own address: /business/, /personal/, /parents/, /tips/, /pricing/, /about/, /contact/. They all serve index.html; `functions/<section>.js` (via `functions/_seo/render.js`) fills in that section's title, description and canonical address and shows that section, so search engines see a real page. Addresses without the last slash redirect to the slash version.
+- Old `#business` style links still work everywhere (Stripe redirects, emails, Pip buttons).
+- Titles and descriptions: edit the `seoPages` list near the top of index.html. Keep titles under about 60 characters and descriptions under about 155.
+- Business details for Google (name, area, prices) are in the `application/ld+json` block in index.html. Keep prices in step with the Pricing table.
+- `og-image.png` is the picture shown when the site is shared on LinkedIn, Facebook or WhatsApp. `sitemap.xml` lists the public pages: add each new page to it. `404.html` is the "page not found" page.

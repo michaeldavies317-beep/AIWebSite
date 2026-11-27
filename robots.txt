@@ -1,2 +1,10 @@
+# DEV: keep search engines out until launch.
+# AT LAUNCH (main branch), replace everything below with:
+#   User-agent: *
+#   Disallow: /members/
+#   Disallow: /admin/
+#   Disallow: /welcome/
+#   Disallow: /api/
+#   Sitemap: https://easystartai.co.uk/sitemap.xml
 User-agent: *
 Disallow: /
