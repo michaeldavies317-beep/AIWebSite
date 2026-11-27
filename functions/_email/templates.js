@@ -52,7 +52,7 @@ export const PRODUCTS = {
     pip: 'Tip: try one template today, even if it only saves you five minutes. Small wins add up.' }),
   plus: P('plus', { theme: 'personal', list: 'Plus members', subscription: true, title: 'Plus', subject: 'Welcome to Easy Start AI Plus',
     headline: 'Welcome to Plus!', intro: "You're in. AI isn't scary, it's simple once you know what you want, and Plus gives you everything we make, plus a real person to help.",
-    perks: ['Everything in the members library, including all the guides and the parent guides', 'A 30-minute set-up call to get you started', 'Message us any time at ' + SUPPORT + ', and we reply within 1 working day'],
+    perks: ['Everything in the members library, including all the guides and the parent guides', 'A 30-minute set-up call to get you started, then a 20-minute check-in call every month', 'One-off sessions at the member price of £35 (normally £45)', 'Message us any time at ' + SUPPORT + ', and we reply within 1 working day'],
     items: PLUS_ITEMS, start: ['Get ready for your set-up call', '/members/plus/before-your-call/'],
     callout: '<strong>Book your set-up call:</strong> just reply to this email with two or three days and times that suit you, and Mike will confirm one.',
     pip: 'Tip: jot down the one job you’d most like AI to take off your plate. That’s the perfect place to start your call.' }),

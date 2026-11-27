@@ -8,7 +8,7 @@ The password lock is switched off for now. Search engines are still asked not to
 
 ## Launch checklist (members and payments)
 - Merge dev into main so /welcome/ and /members/ exist on the live site (Stripe redirects to easystartai.co.uk/welcome/).
-- Swap the seven Stripe TEST links in the PAY list in index.html for live-mode links.
+- Swap the seven Stripe TEST links in the PAY list in index.html for live-mode links. (Starter is £10 and Plus £25 since 27 Nov 2026.) Also swap the TEST "member session £35" link in members/plus/before-your-call/index.html.
 - Billing portal ("Manage or cancel your plan"): in LIVE Stripe, Settings > Billing > Customer portal, copy the sandbox settings (cancel at end of period, reasons on, no email change, no plan switching), activate the login link, and swap the TEST link `billing.stripe.com/p/login/test_...` in members/index.html, welcome/index.html and terms/index.html. Set the return URL and privacy/terms links to easystartai.co.uk.
 - Recreate the Stripe Workflow "Email Mike when a plan ends" in live mode (sandbox workflows don't carry over).
 - Automatic list changes (setup guide Part 10): add STRIPE_WEBHOOK_SECRET (live webhook to https://easystartai.co.uk/api/stripe-webhook, events checkout.session.completed, checkout.session.async_payment_succeeded, customer.subscription.deleted) and CF_LIST_TOKEN (Zero Trust: Edit) under Production. Test with one live purchase and check the admin "Automatic list changes" log.
