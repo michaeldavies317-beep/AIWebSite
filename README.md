@@ -31,6 +31,7 @@ The password lock is switched off for now. Search engines are still asked not to
   3. Test in a private window: https://admin.easystartai.co.uk asks for your email code, then shows Mike's admin. https://easystartai.co.uk/admin/ should jump to the admin address.
   4. Keep the dev one (admin-dev) for testing. Delete the old "Mike's file list" app on members/admin if it's still there.
 
+- Visitor numbers: Web Analytics is switched on for the whole Pages project, so it covers the live site automatically. If you used CF_ANALYTICS_TOKEN, add it under **Production** too, then check the Visitors and System health tabs on admin.easystartai.co.uk.
 - Pip's AI: add the `ANTHROPIC_API_KEY` secret under **Production** too (Workers & Pages > aiwebsite > Settings > Variables and secrets), redeploy, then press "Check Pip's AI" on admin.easystartai.co.uk.
 
 ## Pip's AI answers
@@ -47,6 +48,14 @@ Mike's tools (file list and Pip question log) live in `admin/` and `functions/ad
 - live: https://admin.easystartai.co.uk (set up at launch, see the checklist)
 
 On any other address (dev.easystartai.co.uk, easystartai.co.uk, *.pages.dev), /admin/ redirects to the admin address, so it's never open without the lock. The old /members/admin address redirects there too. The admin address's front page goes straight to /admin/.
+
+The admin page has tabs (the address remembers the tab, e.g. `/admin/#health`):
+- **Members**: automatic list changes (`/admin/list-log`) and recent Stripe purchases (`/admin/purchases`).
+- **Pip**: question log, CSV, "Send a test question", "Check Pip's AI" (`/admin/pip-questions`).
+- **Emails**: Brevo lists, welcome previews/tests, "New this month" drafts (`/admin/email`).
+- **Visitors**: cookie-free visitor numbers from Cloudflare Web Analytics (`/admin/visitors`, GraphQL `rumPageloadEventsAdaptiveGroups`, admin hosts excluded). Needs Web Analytics switched on for the Pages project and a token with Account Analytics: Read (`CF_ANALYTICS_TOKEN`, or that permission added to `CF_API_TOKEN`). Setup guide Part 12.
+- **System health** (`/admin/health`): which settings are present (never their values), one free read-only test call per service (D1, Anthropic models list, Zero Trust lists with each token, Stripe checkout sessions, Brevo lists), Pip AI answers today vs `PIP_DAILY_CAP`, and NEEDS YOU / ERROR rows from the last 30 days. The tab shows a red count when something needs a look.
+- **Library files**: who can open each file in `members/library.json`.
 
 ## Pip question log (content ideas)
 Every question asked to Pip is saved anonymously (date, section, question, whether Pip had an answer, whether it was after the free limit). Emails and phone numbers are blanked out, no IP or ID is kept, and rows older than 12 months are deleted. Mike reviews them on the admin site (see below) under "What people ask Pip", and can download a CSV.

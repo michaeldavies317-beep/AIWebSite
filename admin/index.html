@@ -9,17 +9,53 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/members/members.css">
+<style>
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding:4px;margin:0 -4px;position:sticky;top:0;z-index:5;background:var(--bg)}
+.tabs button{flex:0 0 auto;font:inherit;font-weight:700;font-size:.95rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.tabs button:hover{color:var(--ink);border-color:var(--accent)}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tabs .dot{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#b42318;color:#fff;font-size:.75rem;line-height:20px;text-align:center}
+.tabs .dot.ok{background:var(--accent-soft);color:var(--accent)}
+.tabs button[aria-selected="true"] .dot.ok{background:var(--accent-ink);color:var(--accent)}
+.panel{display:flex;flex-direction:column;gap:28px}
+.panel:focus{outline:none}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .k{font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-weight:800;font-size:1.8rem;line-height:1.1}
+.status{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.status.good{background:var(--accent-soft);color:var(--accent)}
+.status.bad{background:#fde8e6;color:#b42318}
+.status.off{background:var(--line);color:var(--muted)}
+@media (prefers-color-scheme:dark){.status.bad{background:#3d1714;color:#ff9b8f}}
+.meter{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.meter.high span{background:var(--amber)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:110px;padding:8px 4px 0;border-bottom:1px solid var(--line)}
+.bars div{flex:1 1 0;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
+.bars div:hover{opacity:1}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+</style>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="/admin/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="44" width="14" height="14" rx="5" fill="var(--accent)" opacity=".45"/><rect x="22" y="32" width="14" height="26" rx="5" fill="var(--accent)" opacity=".72"/><rect x="40" y="20" width="14" height="38" rx="5" fill="var(--accent)"/><circle cx="47" cy="9" r="6.5" fill="var(--sun)"/></svg><span>Easy Start <span class="ai">AI</span> <small>Admin</small></span></a>
   <nav class="mnav" aria-label="Admin"><a href="/members/" data-main>Members library</a><a href="/" data-main>Main site</a><a href="/cdn-cgi/access/logout">Log out</a></nav>
 </div></header>
-<main><div class="wrap stack" style="gap:24px">
+<main><div class="wrap stack" style="gap:20px">
 <div class="stack">
   <h1>Mike's admin</h1>
-  <p class="lead">Your private tools. This whole address is locked, so only you can get in.</p>
+  <p class="lead">Your private tools. This whole address is locked, so only you can get in. Pick a section below.</p>
 </div>
+<div class="tabs" role="tablist" aria-label="Admin sections">
+  <button role="tab" id="t-members" aria-controls="p-members" aria-selected="true">Members</button>
+  <button role="tab" id="t-pip" aria-controls="p-pip-tab" aria-selected="false">Pip</button>
+  <button role="tab" id="t-emails" aria-controls="p-emails-tab" aria-selected="false">Emails</button>
+  <button role="tab" id="t-visitors" aria-controls="p-visitors" aria-selected="false">Visitors</button>
+  <button role="tab" id="t-health" aria-controls="p-health" aria-selected="false">System health <span class="dot ok" id="healthDot" hidden></span></button>
+  <button role="tab" id="t-files" aria-controls="p-files" aria-selected="false">Library files</button>
+</div>
+<section class="panel" role="tabpanel" id="p-members" aria-labelledby="t-members" tabindex="-1">
 <section class="stack" id="auto" style="gap:16px">
   <h2>Automatic list changes</h2>
   <p class="lead">When someone pays, the site adds their email to the right list for you. When a plan runs out after a cancel, it takes them off. Anything marked <strong>NEEDS YOU</strong> has to be done by hand.</p>
@@ -28,8 +64,37 @@
   <div id="autoStatus" class="note" aria-live="polite">Loading…</div>
   <div class="tablebox" id="autoBox" hidden><table><thead><tr><th>When (UK)</th><th>What happened</th><th>Email</th><th>List</th><th>Result</th></tr></thead><tbody id="autoRows"></tbody></table></div>
 </section>
-
-<section class="stack" id="emails" style="gap:16px">
+<section class="stack" id="buys" style="gap:16px">
+  <h2>Recent purchases</h2>
+  <p class="lead">The last 30 paid orders from Stripe, newest first, and which list to add each buyer to in Zero Trust (Reusable components &gt; Lists).</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="buysRefresh" type="button">Refresh</button><span class="small" id="buysUpdated"></span></div>
+  <div id="buysStatus" class="note" aria-live="polite">Loading…</div>
+  <div class="tablebox" id="buysBox" hidden><table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Bought</th><th>Paid</th><th>Add to list</th></tr></thead><tbody id="buysRows"></tbody></table></div>
+</section>
+</section>
+<section class="panel" role="tabpanel" id="p-pip-tab" aria-labelledby="t-pip" tabindex="-1" hidden>
+<section class="stack" id="pip-sec" style="gap:16px">
+  <h2>What people ask Pip</h2>
+  <p class="lead">The questions people ask Pip, saved anonymously. Questions not covered by a guide yet are the best ideas for new tips and guides.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
+    <button class="btn primary" id="pipRefresh" type="button">Refresh</button><span class="small" id="pipUpdated"></span>
+    <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
+    <button class="btn ghost" id="pipTest" type="button">Send a test question</button>
+    <button class="btn ghost" id="pipAiTest" type="button">Check Pip's AI</button>
+  </div>
+  <div id="pipAiStatus" class="note" aria-live="polite" hidden></div>
+  <div id="pipStatus" class="note" aria-live="polite">Loading…</div>
+  <div id="pipBody" hidden class="stack" style="gap:16px">
+    <div class="tablebox"><table><thead><tr><th>Section</th><th>Questions</th><th>Not covered by a guide yet</th><th>Asked after free limit</th></tr></thead><tbody id="pipCounts"></tbody></table></div>
+    <div><h3>Words that come up most (in questions not covered yet)</h3><p id="pipWords" class="small"></p></div>
+    <div><h3>Questions not covered by a guide yet (ideas for new guides)</h3><div class="tablebox"><table><thead><tr><th>Date</th><th>Section</th><th>Question</th></tr></thead><tbody id="pipGaps"></tbody></table></div></div>
+    <p class="small">Tip: download the spreadsheet and send it to Claude, who will group the questions into themes and suggest guides. Rows older than 12 months are deleted automatically.</p>
+  </div>
+</section>
+</section>
+<section class="panel" role="tabpanel" id="p-emails-tab" aria-labelledby="t-emails" tabindex="-1" hidden>
+<section class="stack" id="emails-sec" style="gap:16px">
   <h2>Emails</h2>
   <p class="lead">Buyers get a welcome email automatically, in their area's colours, and are added to the matching mailing list in Brevo. Use this section to preview the emails, send yourself a test, and write your "New this month" emails.</p>
   <div id="emSetup" class="note" aria-live="polite">Loading…</div>
@@ -54,17 +119,72 @@
     <div id="nwMsg" class="note" aria-live="polite" hidden></div>
   </div>
 </section>
-
-<section class="stack" id="buys" style="gap:16px">
-  <h2>Recent purchases</h2>
-  <p class="lead">The last 30 paid orders from Stripe, newest first, and which list to add each buyer to in Zero Trust (Reusable components &gt; Lists).</p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="buysRefresh" type="button">Refresh</button><span class="small" id="buysUpdated"></span></div>
-  <div id="buysStatus" class="note" aria-live="polite">Loading…</div>
-  <div class="tablebox" id="buysBox" hidden><table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Bought</th><th>Paid</th><th>Add to list</th></tr></thead><tbody id="buysRows"></tbody></table></div>
 </section>
-
+<section class="panel" role="tabpanel" id="p-visitors" aria-labelledby="t-visitors" tabindex="-1" hidden>
+<section class="stack" style="gap:16px">
+  <h2>Website visitors</h2>
+  <p class="lead">How many people visit the site, which pages they look at and how they found you. This uses Cloudflare Web Analytics, which doesn't use cookies or follow people around the web, so no cookie banner is needed. Your own visits to this admin site aren't counted.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <label for="visDays">Show</label><select id="visDays" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)"><option value="7">Last 7 days</option><option value="28">Last 28 days</option></select>
+    <button class="btn primary" id="visRefresh" type="button">Refresh</button><span class="small" id="visUpdated"></span>
+    <a class="btn ghost" href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" rel="noopener">Open full stats in Cloudflare</a>
+  </div>
+  <div id="visStatus" class="note" aria-live="polite">Loading…</div>
+  <div id="visBody" class="stack" style="gap:20px" hidden>
+    <div class="tiles">
+      <div class="tile"><span class="k">Visits</span><span class="v" id="visVisits"></span><span class="small">times someone came to the site</span></div>
+      <div class="tile"><span class="k">Page views</span><span class="v" id="visViews"></span><span class="small">pages opened in total</span></div>
+      <div class="tile"><span class="k">Busiest day</span><span class="v" id="visBest"></span><span class="small" id="visBestN"></span></div>
+    </div>
+    <div><h3>Page views each day</h3><div class="bars" id="visBars" role="img"></div><div class="small" style="display:flex;justify-content:space-between"><span id="visFirst"></span><span id="visLast"></span></div></div>
+    <div class="cols">
+      <div><h3>Top pages</h3><div class="tablebox"><table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody id="visPages"></tbody></table></div></div>
+      <div><h3>Where visitors came from</h3><div class="tablebox"><table><thead><tr><th>Came from</th><th>Visits</th></tr></thead><tbody id="visFrom"></tbody></table></div></div>
+      <div><h3>Countries</h3><div class="tablebox"><table><thead><tr><th>Country</th><th>Views</th></tr></thead><tbody id="visPlaces"></tbody></table></div></div>
+      <div><h3>Devices</h3><div class="tablebox"><table><thead><tr><th>Device</th><th>Views</th></tr></thead><tbody id="visDevices"></tbody></table></div><p class="small" id="visSites"></p></div>
+    </div>
+  </div>
+</section>
+</section>
+<section class="panel" role="tabpanel" id="p-health" aria-labelledby="t-health" tabindex="-1" hidden>
+<section class="stack" style="gap:16px">
+  <h2>System health</h2>
+  <p class="lead">A quick check that everything behind the site is switched on and working. Green means fine. Anything red tells you what to fix. Secret keys are never shown here, only whether they're there.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="hRefresh" type="button">Run the checks again</button><span class="small" id="hUpdated"></span></div>
+  <div id="hStatus" class="note" aria-live="polite">Checking…</div>
+  <div id="hBody" class="stack" style="gap:24px" hidden>
+    <div class="stack" style="gap:10px">
+      <h3>Pip today</h3>
+      <div class="tiles">
+        <div class="tile"><span class="k">AI answers today</span><span class="v" id="hPipN"></span><span class="small" id="hPipCap"></span></div>
+        <div class="tile"><span class="k">People today</span><span class="v" id="hPipPeople"></span><span class="small">each gets 3 free a day</span></div>
+        <div class="tile"><span class="k">Yesterday</span><span class="v" id="hPipY"></span><span class="small">AI answers</span></div>
+      </div>
+      <div class="meter" id="hMeter" role="progressbar" aria-label="Pip answers today against the daily limit" aria-valuemin="0"><span></span></div>
+      <p class="small">When the daily limit is reached, Pip switches to its pre-written answers until the next day starts (midnight in winter, 1am in summer, UK time). That keeps the Anthropic bill small.</p>
+    </div>
+    <div class="stack" style="gap:10px">
+      <h3>Services</h3>
+      <p class="small">Each one makes a small, free, read-only test call.</p>
+      <div class="tablebox"><table><thead><tr><th>What</th><th>Service</th><th>Status</th><th>Details</th></tr></thead><tbody id="hChecks"></tbody></table></div>
+    </div>
+    <div class="stack" style="gap:10px">
+      <h3>Things that need you (last 30 days)</h3>
+      <div id="hProbNone" class="note">Nothing needs you. All automatic list changes and emails went through.</div>
+      <div class="tablebox" id="hProbBox" hidden><table><thead><tr><th>When (UK)</th><th>What happened</th><th>Email</th><th>List</th><th>Problem</th></tr></thead><tbody id="hProbs"></tbody></table></div>
+    </div>
+    <div class="stack" style="gap:10px">
+      <h3>Settings in Cloudflare Pages</h3>
+      <p class="small">These live in Workers &amp; Pages &gt; aiwebsite &gt; Settings &gt; Variables and secrets (and Bindings for the database). This page only checks the copy for the site you're looking at: admin-dev checks the Preview settings, admin checks Production.</p>
+      <div class="tablebox"><table><thead><tr><th>Setting</th><th>Used for</th><th>Status</th></tr></thead><tbody id="hSettings"></tbody></table></div>
+    </div>
+  </div>
+</section>
+</section>
+<section class="panel" role="tabpanel" id="p-files" aria-labelledby="t-files" tabindex="-1" hidden>
+<div class="stack" style="gap:14px">
 <div class="stack">
-  <h2>File list</h2>
+  <h2>Library files</h2>
   <p class="lead">Who can open each tip and template.</p>
 </div>
 <div class="note">To change who sees a file, tick or untick below, then click <strong>Copy the updated list</strong> and send it to Claude (or paste it into <code>members/library.json</code> on GitHub). Plus members can always open everything.</div>
@@ -74,25 +194,7 @@
 </table></div>
 <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn" id="copy" type="button">Copy the updated list</button><span class="small" id="copied" aria-live="polite"></span></div>
 <textarea id="out" rows="8" style="width:100%;font-family:ui-monospace,monospace;font-size:.85rem;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink)" hidden aria-label="Updated list"></textarea>
-
-<section class="stack" id="pip" style="gap:16px;margin-top:24px">
-  <h2>What people ask Pip</h2>
-  <p class="lead">The questions people ask Pip, saved anonymously. Questions not covered by a guide yet are the best ideas for new tips and guides.</p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-    <label for="pipMonth">Month</label><input type="month" id="pipMonth" style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)">
-    <button class="btn primary" id="pipRefresh" type="button">Refresh</button><span class="small" id="pipUpdated"></span>
-    <a class="btn ghost" id="pipCsv" href="#">Download as spreadsheet (CSV)</a>
-    <button class="btn ghost" id="pipTest" type="button">Send a test question</button>
-    <button class="btn ghost" id="pipAiTest" type="button">Check Pip's AI</button>
-  </div>
-  <div id="pipAiStatus" class="note" aria-live="polite" hidden></div>
-  <div id="pipStatus" class="note" aria-live="polite">Loading…</div>
-  <div id="pipBody" hidden class="stack" style="gap:16px">
-    <div class="tablebox"><table><thead><tr><th>Section</th><th>Questions</th><th>Not covered by a guide yet</th><th>Asked after free limit</th></tr></thead><tbody id="pipCounts"></tbody></table></div>
-    <div><h3>Words that come up most (in questions not covered yet)</h3><p id="pipWords" class="small"></p></div>
-    <div><h3>Questions not covered by a guide yet (ideas for new guides)</h3><div class="tablebox"><table><thead><tr><th>Date</th><th>Section</th><th>Question</th></tr></thead><tbody id="pipGaps"></tbody></table></div></div>
-    <p class="small">Tip: download the spreadsheet and send it to Claude, who will group the questions into themes and suggest guides. Rows older than 12 months are deleted automatically.</p>
-  </div>
+</div>
 </section>
 </div></main>
 <footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>Questions? support@easystartai.co.uk</span></div></footer>
@@ -263,6 +365,86 @@
   $('nwDraft').addEventListener('click',async()=>{const f=form();const m=$('nwMsg');m.hidden=false;
     if(!f.subject){m.textContent='Please add a subject line first.';return;}
     $('nwDraft').disabled=true;m.textContent='Saving…';const r=await post({action:'draft',...f});m.textContent=r.message||r.error;$('nwDraft').disabled=false;});
+})();
+</script>
+<script>
+// Tabs. The address remembers the tab (#members, #pip, #emails, #visitors, #health, #files),
+// so Refresh or a bookmark opens the same one.
+(()=>{const tabs=[...document.querySelectorAll('[role=tab]')];
+  const keyOf=t=>t.id.slice(2);
+  function show(key,focus){const t=tabs.find(x=>keyOf(x)===key)||tabs[0];
+    tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});
+    if(focus)t.focus();
+    const bar=t.parentElement;if(t.offsetLeft<bar.scrollLeft||t.offsetLeft+t.offsetWidth>bar.scrollLeft+bar.clientWidth)bar.scrollLeft=t.offsetLeft-16;
+    if(location.hash.slice(1)!==keyOf(t))history.replaceState(null,'','#'+keyOf(t));
+    document.dispatchEvent(new CustomEvent('admintab',{detail:keyOf(t)}));}
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(keyOf(t)));
+    t.addEventListener('keydown',e=>{const n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){e.preventDefault();show(keyOf(tabs[(i+n+tabs.length)%tabs.length]),true);}});});
+  window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+  show(location.hash.slice(1)||'members');
+})();
+</script>
+<script>
+// System health (functions/admin/health.js). Runs once when the page opens, so the tab can show a warning count.
+(()=>{const $=id=>document.getElementById(id);
+  const td=(tr,t)=>{const c=document.createElement('td');if(t instanceof Node)c.appendChild(t);else c.textContent=t;tr.appendChild(c);return c;};
+  const badge=(cls,t)=>{const s=document.createElement('span');s.className='status '+cls;s.textContent=t;return s;};
+  const ukTime=s=>new Date(s.replace(' ','T')+(s.includes('Z')?'':'Z')).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  async function load(){
+    $('hStatus').hidden=false;$('hStatus').textContent='Checking…';
+    let d;try{d=await (await fetch('/admin/health',{cache:'no-store'})).json();}catch(e){$('hStatus').textContent='Could not run the checks. Try again in a minute.';return;}
+    finally{$('hUpdated').textContent='Checked at '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+    // Pip
+    const p=d.pip||{};$('hPipN').textContent=p.today==null?'n/a':p.today;$('hPipCap').textContent='out of '+p.cap+' a day for the whole site';
+    $('hPipPeople').textContent=p.people==null?'n/a':p.people;$('hPipY').textContent=p.yesterday==null?'n/a':p.yesterday;
+    const pct=Math.min(100,Math.round(100*(p.today||0)/(p.cap||1)));const m=$('hMeter');m.firstElementChild.style.width=pct+'%';m.classList.toggle('high',pct>=80);m.setAttribute('aria-valuemax',p.cap);m.setAttribute('aria-valuenow',p.today||0);
+    // Services
+    let bad=0;const tb=$('hChecks');tb.innerHTML='';
+    (d.checks||[]).forEach(c=>{const tr=document.createElement('tr');td(tr,c.name);td(tr,c.what);
+      td(tr,c.ok===true?badge('good','Working'):c.ok===false?badge('bad','Problem'):badge('off','Not set up'));
+      td(tr,c.msg+(c.ok===false?'. Please send this to Claude.':''));if(c.ok===false)bad++;tb.appendChild(tr);});
+    // Problems
+    const pr=d.problems||[];bad+=pr.length;$('hProbNone').hidden=!!pr.length;$('hProbBox').hidden=!pr.length;
+    const pb=$('hProbs');pb.innerHTML='';pr.forEach(r=>{const tr=document.createElement('tr');td(tr,ukTime(r.at));td(tr,r.event);td(tr,r.email);td(tr,r.list);const s=document.createElement('strong');s.textContent=r.result;td(tr,s);pb.appendChild(tr);});
+    // Settings
+    let missing=0;const sb=$('hSettings');sb.innerHTML='';
+    (d.settings||[]).forEach(s=>{const tr=document.createElement('tr');const code=document.createElement('code');code.textContent=s.name;td(tr,code);td(tr,s.what);
+      td(tr,s.present?badge('good','Set'):s.optional?badge('off','Not set (optional)'):badge('bad','Missing'));if(!s.present&&!s.optional)missing++;sb.appendChild(tr);});
+    $('hStatus').textContent=bad?bad+' thing'+(bad>1?'s':'')+' need'+(bad>1?'':'s')+' a look. They are marked in red below.':missing?'Everything that is set up is working. '+missing+' setting'+(missing>1?'s are':' is')+' not set up yet (see the bottom of this page).':'All good. Every service answered and nothing needs you.';
+    $('hStatus').className=bad?'warn':'note';
+    const dot=$('healthDot');dot.hidden=false;dot.textContent=bad?bad:'✓';dot.className='dot'+(bad?'':' ok');dot.setAttribute('aria-label',bad?bad+' problems':'all good');
+    $('hBody').hidden=false;
+  }
+  $('hRefresh').addEventListener('click',async()=>{$('hRefresh').disabled=true;await load();$('hRefresh').disabled=false;});
+  load();
+})();
+</script>
+<script>
+// Website visitors (functions/admin/visitors.js, Cloudflare Web Analytics). Loads when the tab is first opened.
+(()=>{const $=id=>document.getElementById(id);let loaded=false;
+  const fill=(id,rows,label)=>{const tb=$(id);tb.innerHTML='';if(!rows.length){const tr=document.createElement('tr');const c=document.createElement('td');c.colSpan=2;c.className='small';c.textContent='Nothing yet';tr.appendChild(c);tb.appendChild(tr);return;}
+    rows.forEach(r=>{const tr=document.createElement('tr');[label?label(r.name):r.name,r.count.toLocaleString('en-GB')].forEach(t=>{const c=document.createElement('td');c.textContent=t;tr.appendChild(c);});tb.appendChild(tr);});};
+  const nice=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  const DEV={desktop:'Computer',mobile:'Phone',tablet:'Tablet'};
+  async function load(){loaded=true;const st=$('visStatus');st.hidden=false;st.className='note';st.textContent='Loading…';$('visBody').hidden=true;
+    let d;try{d=await (await fetch('/admin/visitors?days='+$('visDays').value,{cache:'no-store'})).json();}catch(e){st.textContent='Could not load visitor numbers. Try Refresh.';return;}
+    finally{$('visUpdated').textContent='Last updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+    if(d.configured===false){st.className='warn';st.textContent=d.reason==='no-permission'?'Visitor tracking may be on, but this page isn\'t allowed to read the numbers yet. The Cloudflare token needs the "Account Analytics: Read" permission (setup guide, Part 12). You can still see them with "Open full stats in Cloudflare".':'Not set up yet: the Cloudflare token for reading visitor numbers is missing (setup guide, Part 12).';return;}
+    if(d.error){st.className='warn';st.textContent='Cloudflare problem: '+d.error+'. Please send this message to Claude.';return;}
+    if(!d.views){st.textContent='No visits recorded in this period yet. If you only just switched on Web Analytics, give it an hour after the next deploy. (The dev site is locked, so only testers show up there.)';return;}
+    st.hidden=true;$('visBody').hidden=false;
+    $('visVisits').textContent=d.visits.toLocaleString('en-GB');$('visViews').textContent=d.views.toLocaleString('en-GB');
+    const best=d.byDay.reduce((a,b)=>b.views>a.views?b:a,d.byDay[0]);$('visBest').textContent=nice(best.day).replace(/ \w+$/,'');$('visBestN').textContent=best.views+' page views';
+    const max=Math.max(1,...d.byDay.map(r=>r.views));const bars=$('visBars');bars.innerHTML='';
+    d.byDay.forEach(r=>{const b=document.createElement('div');b.style.height=(100*r.views/max)+'%';b.title=nice(r.day)+': '+r.views+' page views, '+r.visits+' visits';bars.appendChild(b);});
+    bars.setAttribute('aria-label','Page views per day, highest '+max);$('visFirst').textContent=nice(d.byDay[0].day);$('visLast').textContent=nice(d.byDay[d.byDay.length-1].day);
+    fill('visPages',d.pages,n=>n==='/'?'Home page':n);fill('visFrom',d.from);fill('visPlaces',d.places);fill('visDevices',d.devices,n=>DEV[n]||n);
+    $('visSites').textContent=d.sites.length>1?'Counted on: '+d.sites.map(s=>s.name+' ('+s.count+')').join(', '):'';
+  }
+  document.addEventListener('admintab',e=>{if(e.detail==='visitors'&&!loaded)load();});
+  if(location.hash==='#visitors')load();
+  $('visRefresh').addEventListener('click',async()=>{$('visRefresh').disabled=true;await load();$('visRefresh').disabled=false;});
+  $('visDays').addEventListener('change',load);
 })();
 </script>
 </body>
