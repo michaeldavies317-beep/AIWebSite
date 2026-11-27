@@ -108,3 +108,9 @@ body.t-kids .qcard:nth-child(4n+3){background:#3c8f3a} body.t-kids .qcard:nth-ch
 @media print{body.t-kids .qcard{border:2px dashed #999;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body.t-kids .rules li::before,body.t-parents .chapter .n{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .copy{display:none}}
+.ask{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,28px);display:flex;flex-direction:column;gap:16px}
+.ask label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.95rem;min-width:0}
+.ask input,.ask select,.ask textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+.ask textarea{resize:vertical;min-height:120px}
+.ask .row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.btn:disabled{opacity:.6;cursor:wait}

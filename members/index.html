@@ -22,8 +22,22 @@
 </div>
 <div class="grid" id="cards" aria-live="polite"></div>
 <div class="note" id="upsell" hidden></div>
+<section class="ask" id="ask" aria-labelledby="ask-h">
+  <div class="stack" style="gap:6px">
+    <h2 id="ask-h">Ask Mike</h2>
+    <p class="small" id="askPromise">Send Mike a question about anything AI. He'll reply by email.</p>
+  </div>
+  <form id="askForm" class="stack" novalidate>
+    <div class="row2">
+      <label><span>Your first name <span class="small">(optional)</span></span><input name="name" maxlength="80" autocomplete="given-name"></label>
+      <label>What's it about?<select name="topic" id="askTopic"><option>Using an AI tool</option><option>A guide or template</option><option>My call or session</option><option>My plan or payment</option><option>Something else</option></select></label>
+    </div>
+    <label>Your question<textarea name="message" rows="5" maxlength="5000" required placeholder="Tell Mike what you're trying to do and where you're stuck. Screenshots? Just reply to his email with them."></textarea></label>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn" type="submit">Send to Mike</button><span class="small" id="askStatus" role="status"></span></div>
+  </form>
+</section>
 <div class="note"><strong>Manage or cancel your plan.</strong> Update your card, see your receipts or cancel at any time. <a href="https://billing.stripe.com/p/login/test_3cI5kDbRhdL1e0T7f85AQ00" target="_blank" rel="noopener">Manage or cancel your plan</a>. Enter the email you paid with and Stripe will send you a link. If you cancel, you keep access until the end of the month you've paid for.</div>
-<p class="small">New tips and templates are added regularly. Questions? Email support@easystartai.co.uk.</p>
+<p class="small">New tips and templates are added regularly. Prefer email? Write to support@easystartai.co.uk from the email you signed in with and Mike will see your plan.</p>
 </div></main>
 <footer><div class="wrap"><span>© 2026 Easy Start AI</span><span>Questions? support@easystartai.co.uk</span><span style="display:flex;gap:12px;flex-wrap:wrap"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/cookies/">Cookies</a></span></div></footer>
 <script>
@@ -57,6 +71,28 @@
     el.append(meta,h,p,act);cards.appendChild(el);
   });
   if(known&&!pl){const u=document.getElementById('upsell');u.hidden=false;u.innerHTML='Want everything? <strong>Plus</strong> opens every tip, template and guide, with replies within one working day. <a href="/#personal-plans">See plans</a>';}
+})();
+</script>
+<script>
+(()=>{
+  const f=document.getElementById('askForm'),st=document.getElementById('askStatus'),pr=document.getElementById('askPromise');
+  fetch('/members/ask',{credentials:'same-origin',cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
+    if(d&&d.promise)pr.textContent='Send Mike a question about anything AI. As a '+(d.tier==='plus'?'Plus':'Starter')+' member you\'ll get a reply '+d.promise+' (Monday to Friday), by email to '+d.email+'.';
+    else if(d&&d.email)pr.textContent='Send Mike a question. He\'ll reply by email to '+d.email+'.';
+  }).catch(()=>{});
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const data=Object.fromEntries(new FormData(f));
+    if(String(data.message||'').trim().length<5){st.textContent='Please write your question first.';f.message.focus();return;}
+    const b=f.querySelector('button');b.disabled=true;st.textContent='Sending…';
+    try{
+      const r=await fetch('/members/ask',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
+      const d=await r.json().catch(()=>({}));
+      if(r.ok&&d.ok){f.reset();st.textContent=d.replyBy?'Sent! Mike will reply by '+d.replyBy+'.':'Sent! Mike will reply by email.';}
+      else st.textContent=d.error||'Sorry, that didn\'t send. Please email support@easystartai.co.uk.';
+    }catch(err){st.textContent='Sorry, that didn\'t send. Please email support@easystartai.co.uk.';}
+    b.disabled=false;
+  });
 })();
 </script>
 </body>
